@@ -2,33 +2,53 @@ private class Controller
 {
   Animator a;
   private Map<Integer, Ani>aniSegments;
-
+  private int needleX, needleY, needleH;
+  private PFont font;
 
   Controller(Animator _a)
   {
     a = _a;
     aniSegments = new HashMap<Integer, Ani>();
+    needleX = int(a.wWidth*.05);
+    needleY = int(a.wHeight/2);
+    needleH = 25;
+    font = createFont("Symbola.ttf", 32);
   }
 
-  void scrollTimeLine(float _mx, boolean _p)
+  void scrollTimeLine(float _mx, float _my, boolean _p)
   {
+    
+     fill(255);
+     a.textFont(font);
+     char play = 0x23F5;
+     char pause = 0x23F8;
+     char stop = 0x23F9;
+     char begin = 0x23EE;
+     char end = 0x23ED;
+     char nextFrame = 0x23E9; 
+     char prevFrame = 0x23EA;
+     char control[] = {play, pause, stop, begin, end, nextFrame, prevFrame};
+     String controls = new String(control);
+     
+    a.text(controls, a.wWidth/2, a.wHeight/2);
+    
     a.stroke(2);
-    a.line(a.needleX, 20, a.needleX, a.needleH);
-    if (_mx > a.needleX-15 && _mx < a.needleX+15 && _p && a.master.isPlaying())
+    a.line(needleX, needleY-needleH, needleX, needleY+needleH);
+    if (_mx > needleX-15 && _mx < needleX+15 && _p && a.master.isPlaying() && (_my > needleY-needleH && _my < needleY+needleH))
     {
-      a.noStroke();
-      a.rect(a.needleX-5, 20, 10, a.needleH-20); 
       a.master.pause();
       for (Ani myAni : aniSegments.values())
       {
         myAni.pause();
       }
-    } else if (_mx > a.needleX-15 && _mx < a.needleX+15)
+    }
+    if (_mx > needleX-15 && _mx < needleX+15 && (_my > needleY-needleH && _my < needleY+needleH))
     {
       a.noStroke();
       a.fill(255, 64);
-      a.rect(a.needleX-5, 20, 10, a.needleH-20);
-    } else if ( _p)
+      a.rect(needleX-5, needleY-needleH, 10, needleH*2);
+    }
+    if (_p && _mx > needleX-15 && _mx < needleX+15 && _my > needleY-needleH && _my < needleY+needleH)
     {
       a.master.seek(map(_mx, a.wWidth*.05, a.wWidth*.95, 0, 1));
       for (Ani myAni : aniSegments.values())

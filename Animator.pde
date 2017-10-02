@@ -10,10 +10,9 @@ private class Animator extends PApplet
   private float Length;
   private boolean isPlaying = false;
   private int wWidth, wHeight;
-  private int needleX, needleH;
   private Ani master, ani;
-  private  int frames;
-
+  private int frames;
+  
   Animator(PApplet _p, float _l, int _w, int _h)
   { 
     super();
@@ -22,12 +21,10 @@ private class Animator extends PApplet
     wWidth = _w;
     wHeight = _h;    
     PApplet.runSketch(new String[]{this.getClass().getName()}, this);
-    needleX = int(wWidth*.05);
-    needleH = 150;
     frames = int(Length*60);
+    
   }
-
-  public void settings()
+; public void settings()
   {
     size(wWidth, wHeight);
   }
@@ -39,17 +36,24 @@ private class Animator extends PApplet
     Ani.init(parent);
     Ani.setDefaultTimeMode(Ani.FRAMES);
     Ani.noAutostart();
-    // master timeline setup
-    gui.addGroup("timeLine").setPosition(int((wWidth*.05)), 15).setSize(int((wWidth*.9)), 150).setBackgroundColor(color(255, 50)).disableCollapse();
-    master = new Ani(this, frames, 0.0, "needleX", wWidth*.95, Ani.LINEAR);
+    playBackControls();
+  }
+
+  void playBackControls()
+  {
+    int h = 50; 
+    gui.addGroup("playback").setPosition(int((wWidth*.05)), wHeight/2-h/2).setSize(int((wWidth*.9)), h).setBackgroundColor(color(255, 50)).disableCollapse();
+    master = new Ani(controller, frames, 0.0, "needleX", wWidth*.95, Ani.LINEAR);
     master.setPlayMode(Ani.FORWARD);
     master.noRepeat();
+   
+    
   }
 
   public void draw()
   {
     background(128);
-    controller.scrollTimeLine(mouseX, mousePressed);
+    controller.scrollTimeLine(mouseX, mouseY, mousePressed);
   } 
 
 
