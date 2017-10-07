@@ -6,13 +6,15 @@ private class Animator extends PApplet
 {   
   private PApplet parent;
   private ControlP5 gui;
-  private Controller controller;   
+  protected Controller controller;   
   private float Length, wLeft, wRight;
   private boolean isPlaying = false;
   private int wWidth, wHeight, cHeight;
   private Ani master, ani;
   private int frames;
   private Map <String, Object> tracks = new HashMap<String, Object>();
+  
+  Animator(){};
 
   Animator(PApplet _p, float _l, int _w, int _h)
   { 
@@ -23,10 +25,10 @@ private class Animator extends PApplet
     wHeight = _h;    
     PApplet.runSketch(new String[]{this.getClass().getName()}, this);
     frames = int(Length*60);
-    wLeft = .01;
-    wRight = .98;
+    wLeft = .02;
+    wRight = .96;
   }; 
-  
+
   public void settings()
   {
     size(wWidth, wHeight);
@@ -76,20 +78,22 @@ private class Animator extends PApplet
 
     for (String obj : tracks.keySet())
     {
-      String tg = "track " + obj;   
-      gui.addGroup(tg).setId(tg.hashCode()).setPosition(int(wWidth*wLeft), posY).setSize(int(wWidth*wRight), trackHeight).setBackgroundColor(color(255, 50)).disableCollapse();
-      //gui.addButton(" +").setPosition(5, 5).setSize(15, 15).setGroup(tg); 
-
-      ani = new Ani(tracks.get(obj), frames, 0.0, obj, 200.0, Ani.LINEAR);
-      ani.setPlayMode(Ani.FORWARD);
-      ani.noRepeat();
-      controller.aniSegments.put(tg.hashCode(), ani);
+      gui.addGroup(obj).setPosition(int(wWidth*wLeft), posY).setSize(int(wWidth*wRight), trackHeight).setBackgroundColor(color(255, 50)).disableCollapse();
+      gui.addButton(obj + "add").setCaptionLabel(" +").setId(obj.hashCode()).setPosition(-15, -2).setSize(15, 15).setGroup(obj)
+        .onClick(new CallbackListener() 
+      {
+        public void controlEvent(CallbackEvent theEvent) 
+        {
+          controller.addSegment(theEvent.getController().getName(), frames, 200);
+        }
+      }
+      );           
       posY += (trackHeight + spacing*2);
     }
   }
 
-  void newTrack(Object obj, String field)
-  {    
-    tracks.put(field, obj);
+    void newTrack(Object obj, String field)
+    {    
+      tracks.put(field, obj);
+    }
   }
-}

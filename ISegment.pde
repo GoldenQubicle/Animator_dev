@@ -1,5 +1,6 @@
-abstract class Segment
+abstract class Segment extends Animator
 {
+
   protected float Duration;
   protected float Start;
   protected float End;   
@@ -8,13 +9,13 @@ abstract class Segment
   abstract void moveStart();
   abstract void moveEnd();
   abstract void moveWhole();
-
 }
 
-class cp5Segment extends Segment
+private class cp5Segment extends Segment
 {
   cp5Segment(ScrollableList _eas)
   {
+    super();
     this.easings = _eas;
   }
   void moveStart() 
@@ -32,15 +33,18 @@ class cp5Segment extends Segment
   }
   float getEasing()
   {
-   return this.easings.getValue(); 
+    return this.easings.getValue();
   }
-  
 }
 
-class aniSegment extends Segment
+private class aniSegment extends Segment
 {
-  aniSegment() 
+  aniSegment(Object obj, int frames, String field, float value, int _k) 
   {
+    ani = new Ani(obj, frames, 0.0, field, value, Ani.LINEAR);
+    ani.setPlayMode(Ani.FORWARD);
+    ani.noRepeat();
+    //controller.aniSegments.put(_k, this);
   }
   void moveStart() 
   {
@@ -52,5 +56,5 @@ class aniSegment extends Segment
 
   void moveWhole() 
   {
-  } 
+  }
 }

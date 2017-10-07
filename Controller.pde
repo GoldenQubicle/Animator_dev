@@ -1,14 +1,15 @@
 private class Controller
 {
   Animator a;
-  private Map<Integer, Ani>aniSegments;
+  private Map<String, Ani>aniSegments;
   private int needleX, needleY, needleH;
   private PFont font;
+  Ani ani;
 
   Controller(Animator _a)
   {
     a = _a;
-    aniSegments = new HashMap<Integer, Ani>();
+    aniSegments = new HashMap<String, Ani>();
     needleX = int(a.wWidth*a.wLeft);
     needleY = int(a.wHeight/2);
     needleH = a.cHeight/2;
@@ -30,37 +31,51 @@ private class Controller
   //  String controls = new String(control);
   //  a.text(controls, 0, a.wHeight/2);
 
-   
+
   //  // basic shapes - button class?!
   //  a.triangle(0, 0, 40, 40, 0, 80);
   //  a.rect(0,0,17,80);    
   //}
 
-  void scrollTimeLine(float _mx, float _my, boolean _p) 
+
+  void addSegment(String field, int frames, float value)
+  {
+    field = field.substring(0, field.length()-3);
+    Object obj = a.tracks.get(field);
+    ani = new Ani(obj, frames, 0.0, field, value, Ani.LINEAR);
+    ani.setPlayMode(Ani.FORWARD);
+    ani.noRepeat();
+    aniSegments.put(ani.toString(), ani);
+  }
+
+  void scrollTimeLine(float mX, float mY, boolean mP) 
   {        
     a.stroke(2);
     a.line(needleX, needleY-needleH, needleX, needleY+needleH);
-    if (_mx > needleX-20 && _mx < needleX+20 && _p && a.master.isPlaying() && (_my > needleY-needleH && _my < needleY+needleH))
+    if (mX > needleX-20 && mX < needleX+20 && mP && a.master.isPlaying() && (mY > needleY-needleH && mY < needleY+needleH))
     {
       a.master.pause();
-      for (Ani myAni : aniSegments.values())
+      for (Ani ani : aniSegments.values())
       {
-        myAni.pause();
+        ani.pause();
       }
     }
-    if (_mx > needleX-20 && _mx < needleX+20 && (_my > needleY-needleH && _my < needleY+needleH))
+    if (mX > needleX-20 && mX < needleX+20 && (mY > needleY-needleH && mY < needleY+needleH))
     {
       a.noStroke();
       a.fill(255, 64);
       a.rect(needleX-5, needleY-needleH, 10, needleH*2);
     }
-    if (_p && (_mx > needleX-20 && _mx < needleX+20) && (_my > needleY-needleH && _my < needleY+needleH))
+    if (mP && (mX > needleX-35 && mX < needleX+35) && (mY > needleY-needleH && mY < needleY+needleH))
     {      
-      a.master.seek(map(_mx, a.wWidth*a.wLeft, a.wWidth*a.wRight, 0, 1));
-      
-      for (Ani myAni : aniSegments.values())
+      a.noStroke();
+      a.fill(255, 128);
+      a.rect(needleX-5, needleY-needleH, 10, needleH*2);
+
+      a.master.seek(map(mX, a.wWidth*a.wLeft, a.wWidth*a.wRight, 0, 1));
+      for (Ani ani : aniSegments.values())
       {
-        myAni.seek(map(_mx, a.wWidth*a.wLeft, a.wWidth*a.wRight, 0, 1));
+        ani.seek(map(mX, a.wWidth*a.wLeft, a.wWidth*a.wRight, 0, 1));
       }
     }
     if (a.master.isEnded())
@@ -78,6 +93,7 @@ private class Controller
       for (Ani ani : aniSegments.values())
       {
         ani.start();
+        println(ani.getDurationTotal());
       }
     } else if (a.master.isPlaying() && a.isPlaying)
     {

@@ -15,7 +15,7 @@ void setup()
   window.newTrack(this, "rWidth");
   window.newTrack(this, "rHeight");
   //window.newTrack(this.xy, "x");
-  window.newTrack(this.xy, "y");
+  //window.newTrack(this.xy, "y");
 }
 
 
