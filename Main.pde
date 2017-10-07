@@ -11,9 +11,13 @@ void settings()
 
 void setup()
 {
-  window = new Animator(this, 2, 728, 200);
-  window.newTrack(this, "rWidth"); 
+  window = new Animator(this, 2, 728, 512);
+  window.newTrack(this, "rWidth");
+  window.newTrack(this, "rHeight");
+  //window.newTrack(this.xy, "x");
+  window.newTrack(this.xy, "y");
 }
+
 
 
 

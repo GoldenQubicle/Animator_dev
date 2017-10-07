@@ -9,7 +9,7 @@ private class Controller
   {
     a = _a;
     aniSegments = new HashMap<Integer, Ani>();
-    needleX = int(a.wWidth*.05);
+    needleX = int(a.wWidth*a.wLeft);
     needleY = int(a.wHeight/2);
     needleH = a.cHeight/2;
     font = createFont("Symbola.ttf", 128);
@@ -40,7 +40,7 @@ private class Controller
   {        
     a.stroke(2);
     a.line(needleX, needleY-needleH, needleX, needleY+needleH);
-    if (_mx > needleX-15 && _mx < needleX+15 && _p && a.master.isPlaying() && (_my > needleY-needleH && _my < needleY+needleH))
+    if (_mx > needleX-20 && _mx < needleX+20 && _p && a.master.isPlaying() && (_my > needleY-needleH && _my < needleY+needleH))
     {
       a.master.pause();
       for (Ani myAni : aniSegments.values())
@@ -48,18 +48,19 @@ private class Controller
         myAni.pause();
       }
     }
-    if (_mx > needleX-15 && _mx < needleX+15 && (_my > needleY-needleH && _my < needleY+needleH))
+    if (_mx > needleX-20 && _mx < needleX+20 && (_my > needleY-needleH && _my < needleY+needleH))
     {
       a.noStroke();
       a.fill(255, 64);
       a.rect(needleX-5, needleY-needleH, 10, needleH*2);
     }
-    if (_p && _mx > needleX-50 && _mx < needleX+50 && _my > needleY-needleH && _my < needleY+needleH)
-    {
-      a.master.seek(map(_mx, a.wWidth*.05, a.wWidth*.95, 0, 1));
+    if (_p && (_mx > needleX-20 && _mx < needleX+20) && (_my > needleY-needleH && _my < needleY+needleH))
+    {      
+      a.master.seek(map(_mx, a.wWidth*a.wLeft, a.wWidth*a.wRight, 0, 1));
+      
       for (Ani myAni : aniSegments.values())
       {
-        myAni.seek(map(_mx, a.wWidth*.05, a.wWidth*.95, 0, 1));
+        myAni.seek(map(_mx, a.wWidth*a.wLeft, a.wWidth*a.wRight, 0, 1));
       }
     }
     if (a.master.isEnded())
