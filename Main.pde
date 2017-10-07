@@ -11,8 +11,10 @@ void settings()
 
 void setup()
 {
-  window = new Animator(this, 10, 728, 200);
+  window = new Animator(this, 2, 728, 200);
+  window.newTrack(this, "rWidth"); 
 }
+
 
 
 void draw()
@@ -24,6 +26,5 @@ void draw()
 
 void mousePressed()
 {
-  //window.newTrack(this, "rWidth");
   //window.newTrack(this, "rHeight");
 }

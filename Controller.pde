@@ -12,26 +12,34 @@ private class Controller
     needleX = int(a.wWidth*.05);
     needleY = int(a.wHeight/2);
     needleH = 25;
-    font = createFont("Symbola.ttf", 32);
+    font = createFont("Symbola.ttf", 128);
   }
 
-  void scrollTimeLine(float _mx, float _my, boolean _p)
-  {
+  //void characterdesign()
+  //{
+  //  fill(255);
+  //  a.textFont(font);
+  //  char play = 0x23F5;
+  //  char pause = 0x23F8;
+  //  char stop = 0x23F9;
+  //  char begin = 0x23EE;
+  //  char end = 0x23ED;
+  //  char nextFrame = 0x23E9; 
+  //  char prevFrame = 0x23EA;
+  //  char control[] = {play, pause, stop, begin, end, nextFrame, prevFrame};
+  //  String controls = new String(control);
+  //  a.text(controls, 0, a.wHeight/2);
+
+   
+  //  // basic shapes - button class?!
+  //  a.triangle(0, 0, 40, 40, 0, 80);
+  //  a.rect(0,0,17,80);
+
     
-     fill(255);
-     a.textFont(font);
-     char play = 0x23F5;
-     char pause = 0x23F8;
-     char stop = 0x23F9;
-     char begin = 0x23EE;
-     char end = 0x23ED;
-     char nextFrame = 0x23E9; 
-     char prevFrame = 0x23EA;
-     char control[] = {play, pause, stop, begin, end, nextFrame, prevFrame};
-     String controls = new String(control);
-     
-    a.text(controls, a.wWidth/2, a.wHeight/2);
-    
+  //}
+
+  void scrollTimeLine(float _mx, float _my, boolean _p) 
+  {        
     a.stroke(2);
     a.line(needleX, needleY-needleH, needleX, needleY+needleH);
     if (_mx > needleX-15 && _mx < needleX+15 && _p && a.master.isPlaying() && (_my > needleY-needleH && _my < needleY+needleH))

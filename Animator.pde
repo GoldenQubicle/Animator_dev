@@ -12,7 +12,9 @@ private class Animator extends PApplet
   private int wWidth, wHeight;
   private Ani master, ani;
   private int frames;
-  
+  private  boolean setupDone = false;
+  private Map <String, Object> tracks = new HashMap<String, Object>();
+
   Animator(PApplet _p, float _l, int _w, int _h)
   { 
     super();
@@ -22,9 +24,9 @@ private class Animator extends PApplet
     wHeight = _h;    
     PApplet.runSketch(new String[]{this.getClass().getName()}, this);
     frames = int(Length*60);
-    
   }
-; public void settings()
+  ; 
+  public void settings()
   {
     size(wWidth, wHeight);
   }
@@ -36,7 +38,8 @@ private class Animator extends PApplet
     Ani.init(parent);
     Ani.setDefaultTimeMode(Ani.FRAMES);
     Ani.noAutostart();
-    playBackControls();
+    playBackControls();   
+    setupDone = true;
   }
 
   void playBackControls()
@@ -46,14 +49,18 @@ private class Animator extends PApplet
     master = new Ani(controller, frames, 0.0, "needleX", wWidth*.95, Ani.LINEAR);
     master.setPlayMode(Ani.FORWARD);
     master.noRepeat();
-   
-    
   }
 
   public void draw()
   {
+    if (setupDone)
+    {
+      createTrack();
+      setupDone = false;
+    }
     background(128);
     controller.scrollTimeLine(mouseX, mouseY, mousePressed);
+    //controller.characterdesign();
   } 
 
 
@@ -66,15 +73,23 @@ private class Animator extends PApplet
   }
 
 
+  void createTrack()
+  {
+    for (String obj : tracks.keySet())
+    {
+      String tg = "track " + obj;   
+      gui.addGroup(tg).setId(tg.hashCode()).setPosition(int((wWidth*.05)), 10).setSize(int((wWidth*.9)), 50).setBackgroundColor(color(255, 50)).disableCollapse();
+      gui.addButton(" +").setPosition(5, 5).setSize(15, 15).setGroup(tg); 
+
+      ani = new Ani(tracks.get(obj), frames, 0.0, obj, 200.0, Ani.LINEAR);
+      ani.setPlayMode(Ani.FORWARD);
+      ani.noRepeat();
+      controller.aniSegments.put(tg.hashCode(), ani);
+    }
+  }
+
   void newTrack(Object obj, String field)
   {    
-    String tg = "track " + field;   
-    gui.addGroup(tg).setId(tg.hashCode()).setPosition(int((wWidth*.05)), 10).setSize(int((wWidth*.9)), 50).setBackgroundColor(color(255, 50)).disableCollapse();
-    gui.addButton(" +").setPosition(5, 5).setSize(15, 15).setGroup(tg); 
-
-    ani = new Ani(obj, frames, 0.0, field, 200.0, Ani.LINEAR);
-    ani.setPlayMode(Ani.FORWARD);
-    ani.noRepeat();
-    controller.aniSegments.put(tg.hashCode(), ani);
+    tracks.put(field, obj);
   }
 }
