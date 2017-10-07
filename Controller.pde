@@ -11,7 +11,7 @@ private class Controller
     aniSegments = new HashMap<Integer, Ani>();
     needleX = int(a.wWidth*.05);
     needleY = int(a.wHeight/2);
-    needleH = 25;
+    needleH = a.cHeight/2;
     font = createFont("Symbola.ttf", 128);
   }
 
@@ -33,9 +33,7 @@ private class Controller
    
   //  // basic shapes - button class?!
   //  a.triangle(0, 0, 40, 40, 0, 80);
-  //  a.rect(0,0,17,80);
-
-    
+  //  a.rect(0,0,17,80);    
   //}
 
   void scrollTimeLine(float _mx, float _my, boolean _p) 
@@ -56,7 +54,7 @@ private class Controller
       a.fill(255, 64);
       a.rect(needleX-5, needleY-needleH, 10, needleH*2);
     }
-    if (_p && _mx > needleX-15 && _mx < needleX+15 && _my > needleY-needleH && _my < needleY+needleH)
+    if (_p && _mx > needleX-50 && _mx < needleX+50 && _my > needleY-needleH && _my < needleY+needleH)
     {
       a.master.seek(map(_mx, a.wWidth*.05, a.wWidth*.95, 0, 1));
       for (Ani myAni : aniSegments.values())
