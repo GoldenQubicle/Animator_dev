@@ -38,9 +38,9 @@ private class Controller
   //}
 
 
-  void addSegment(String field, int frames, float value)
+  void addSegment(String buttonName, int frames, float value)
   {
-    field = field.substring(0, field.length()-3);
+    String field = buttonName.substring(0, buttonName.length()-3);
     Object obj = a.tracks.get(field);
     ani = new Ani(obj, frames, 0.0, field, value, Ani.LINEAR);
     ani.setPlayMode(Ani.FORWARD);
@@ -93,7 +93,6 @@ private class Controller
       for (Ani ani : aniSegments.values())
       {
         ani.start();
-        println(ani.getDurationTotal());
       }
     } else if (a.master.isPlaying() && a.isPlaying)
     {

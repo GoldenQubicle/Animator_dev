@@ -39,11 +39,17 @@ private class cp5Segment extends Segment
 
 private class aniSegment extends Segment
 {
-  aniSegment(Object obj, int frames, String field, float value, int _k) 
+  aniSegment() 
+  {
+
+  }
+  
+  Ani create (Object obj, int frames, String field, float value, int _k) 
   {
     ani = new Ani(obj, frames, 0.0, field, value, Ani.LINEAR);
     ani.setPlayMode(Ani.FORWARD);
     ani.noRepeat();
+    return ani;
     //controller.aniSegments.put(_k, this);
   }
   void moveStart() 

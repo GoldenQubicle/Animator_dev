@@ -1,6 +1,7 @@
 import controlP5.*;
 import de.looksgood.ani.*;
 import java.util.*;
+import java.lang.reflect.*;
 
 private class Animator extends PApplet
 {   
@@ -10,11 +11,12 @@ private class Animator extends PApplet
   private float Length, wLeft, wRight;
   private boolean isPlaying = false;
   private int wWidth, wHeight, cHeight;
-  private Ani master, ani;
+  private Ani master;
   private int frames;
   private Map <String, Object> tracks = new HashMap<String, Object>();
-  
-  Animator(){};
+
+  Animator() {
+  };
 
   Animator(PApplet _p, float _l, int _w, int _h)
   { 
@@ -43,8 +45,9 @@ private class Animator extends PApplet
     Ani.setDefaultTimeMode(Ani.FRAMES);
     Ani.noAutostart();
     playBackControls();
-    newTracks();
+    newTracks(); 
   }
+
 
   void playBackControls()
   {
@@ -70,16 +73,24 @@ private class Animator extends PApplet
     }
   }
 
-  void newTracks()
+  public void newTracks()
   {
+    // dddaaaaa yeah need to refactor and beforehand have a think how to go about handling different control schemes
+    // as in, I want to be able to set slider, slider2d, and have boolean toggles for stroke/fill, ect
+    // also, how to handle the min/max values for the cp5 controls
+    // thinking maaaaybe, the abstract class setup wasnt so bad
+    // in that, on initialisation I could use them to store the value, and then both have methods for actual creation
+    // so instead of iterating over tracks, Id iterate over segments array
+    
     int spacing = 10;
     int trackHeight = 25;
-    int posY = wHeight/2 + cHeight + spacing;
-
+    int tPosY = wHeight/2 + cHeight + spacing;
+    int cPosY = 10;
+    // object animation tracks
     for (String obj : tracks.keySet())
     {
-      gui.addGroup(obj).setPosition(int(wWidth*wLeft), posY).setSize(int(wWidth*wRight), trackHeight).setBackgroundColor(color(255, 50)).disableCollapse();
-      gui.addButton(obj + "add").setCaptionLabel(" +").setId(obj.hashCode()).setPosition(-15, -2).setSize(15, 15).setGroup(obj)
+      gui.addGroup("Track "+obj).setPosition(int(wWidth*wLeft), tPosY).setSize(int(wWidth*wRight), trackHeight).setBackgroundColor(color(255, 50)).disableCollapse();
+      gui.addButton(obj + "add").setCaptionLabel(" +").setId(obj.hashCode()).setPosition(-15, -2).setSize(15, 15).setGroup("Track " + obj)
         .onClick(new CallbackListener() 
       {
         public void controlEvent(CallbackEvent theEvent) 
@@ -88,12 +99,51 @@ private class Animator extends PApplet
         }
       }
       );           
-      posY += (trackHeight + spacing*2);
+      tPosY += (trackHeight + spacing*2);
+    }
+
+    //object cp5 controls - slider for now
+    // sooo got an issue here - how to pass down the min-max values for the controller?!
+    for (String obj : tracks.keySet())
+    {
+      gui.addGroup("Control "+obj).setPosition(int(wWidth*wLeft), cPosY).setSize(int((wWidth/2)), trackHeight).setBackgroundColor(color(255, 50)).disableCollapse();
+      gui.addSlider(obj).setGroup("Control "+obj).setPosition(5, 5).setSize(int((wWidth/2)*wRight), 10)
+        .onChange(new CallbackListener()
+      {
+        public void controlEvent(CallbackEvent theEvent) 
+        {
+          if (theEvent.getAction()==ControlP5.ACTION_BROADCAST)
+          {
+            Object obj = tracks.get(theEvent.getController().getName());
+            Class cls = obj.getClass();
+            for (int i = 0; i < cls.getDeclaredFields().length; i++)
+            {
+              if (cls.getDeclaredFields()[i].getName().equals(theEvent.getController().getName()))
+              {
+                float value = theEvent.getController().getValue();
+                Field field = cls.getDeclaredFields()[i];
+                field.setAccessible(true);
+                try {
+                  field.set(obj, value);
+                } 
+                catch(Exception e) {
+                  println(e);
+                }         
+              }
+            }
+          }
+        }
+      }
+      );
+      cPosY += (trackHeight + spacing*2);
     }
   }
 
-    void newTrack(Object obj, String field)
-    {    
-      tracks.put(field, obj);
-    }
+
+
+  void newTrack(Object obj, String field)
+  {    
+    // here we make Segment objects for both ani and cp5 and store them
+    tracks.put(field, obj);
   }
+}
