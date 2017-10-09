@@ -1,7 +1,8 @@
 private class Controller
 {
   Animator a;
-  private Map<String, Ani>aniSegments;
+  private Map<String, Segment>Segments;
+
   private int needleX, needleY, needleH;
   private PFont font;
   Ani ani;
@@ -9,7 +10,7 @@ private class Controller
   Controller(Animator _a)
   {
     a = _a;
-    aniSegments = new HashMap<String, Ani>();
+    Segments = new HashMap<String, Segment>();
     needleX = int(a.wWidth*a.wLeft);
     needleY = int(a.wHeight/2);
     needleH = a.cHeight/2;
@@ -38,16 +39,6 @@ private class Controller
   //}
 
 
-  void addSegment(String buttonName, int frames, float value)
-  {
-    String field = buttonName.substring(0, buttonName.length()-3);
-    Object obj = a.tracks.get(field);
-    ani = new Ani(obj, frames, 0.0, field, value, Ani.LINEAR);
-    ani.setPlayMode(Ani.FORWARD);
-    ani.noRepeat();
-    aniSegments.put(ani.toString(), ani);
-  }
-
   void scrollTimeLine(float mX, float mY, boolean mP) 
   {        
     a.stroke(2);
@@ -55,9 +46,9 @@ private class Controller
     if (mX > needleX-20 && mX < needleX+20 && mP && a.master.isPlaying() && (mY > needleY-needleH && mY < needleY+needleH))
     {
       a.master.pause();
-      for (Ani ani : aniSegments.values())
+      for (Segment segment : Segments.values())
       {
-        ani.pause();
+       segment.ani.pause();
       }
     }
     if (mX > needleX-20 && mX < needleX+20 && (mY > needleY-needleH && mY < needleY+needleH))
@@ -73,9 +64,9 @@ private class Controller
       a.rect(needleX-5, needleY-needleH, 10, needleH*2);
 
       a.master.seek(map(mX, a.wWidth*a.wLeft, a.wWidth*a.wRight, 0, 1));
-      for (Ani ani : aniSegments.values())
+      for (Segment segment : Segments.values())
       {
-        ani.seek(map(mX, a.wWidth*a.wLeft, a.wWidth*a.wRight, 0, 1));
+        segment.ani.seek(map(mX, a.wWidth*a.wLeft, a.wWidth*a.wRight, 0, 1));
       }
     }
     if (a.master.isEnded())
@@ -90,23 +81,23 @@ private class Controller
     {
       a.isPlaying = true;
       a.master.start();
-      for (Ani ani : aniSegments.values())
+      for (Segment segment : Segments.values())
       {
-        ani.start();
+        segment.ani.start();
       }
     } else if (a.master.isPlaying() && a.isPlaying)
     {
       a.master.pause();
-      for (Ani ani : aniSegments.values())
+      for (Segment segment : Segments.values())
       {
-        ani.pause();
+        segment.ani.pause();
       }
     } else if (!a.master.isPlaying() && a.isPlaying) 
     {
       a.master.resume();
-      for (Ani ani : aniSegments.values())
+      for (Segment segment : Segments.values())
       {
-        ani.resume();
+        segment.ani.resume();
       }
     }
   }

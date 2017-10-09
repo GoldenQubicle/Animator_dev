@@ -1,5 +1,6 @@
 import controlP5.*;
 import de.looksgood.ani.*;
+import de.looksgood.ani.easing.*;
 import java.util.*;
 import java.lang.reflect.*;
 
@@ -14,9 +15,7 @@ private class Animator extends PApplet
   private Ani master;
   private int frames;
   private Map <String, Object> tracks = new HashMap<String, Object>();
-
-  Animator() {
-  };
+  private Map <String, float[]> minmax = new HashMap<String, float[]>();
 
   Animator(PApplet _p, float _l, int _w, int _h)
   { 
@@ -45,7 +44,7 @@ private class Animator extends PApplet
     Ani.setDefaultTimeMode(Ani.FRAMES);
     Ani.noAutostart();
     playBackControls();
-    newTracks(); 
+    newTracks();
   }
 
 
@@ -77,11 +76,7 @@ private class Animator extends PApplet
   {
     // dddaaaaa yeah need to refactor and beforehand have a think how to go about handling different control schemes
     // as in, I want to be able to set slider, slider2d, and have boolean toggles for stroke/fill, ect
-    // also, how to handle the min/max values for the cp5 controls
-    // thinking maaaaybe, the abstract class setup wasnt so bad
-    // in that, on initialisation I could use them to store the value, and then both have methods for actual creation
-    // so instead of iterating over tracks, Id iterate over segments array
-    
+
     int spacing = 10;
     int trackHeight = 25;
     int tPosY = wHeight/2 + cHeight + spacing;
@@ -90,20 +85,20 @@ private class Animator extends PApplet
     for (String obj : tracks.keySet())
     {
       gui.addGroup("Track "+obj).setPosition(int(wWidth*wLeft), tPosY).setSize(int(wWidth*wRight), trackHeight).setBackgroundColor(color(255, 50)).disableCollapse();
-      gui.addButton(obj + "add").setCaptionLabel(" +").setId(obj.hashCode()).setPosition(-15, -2).setSize(15, 15).setGroup("Track " + obj)
+      gui.addButton(obj + "add").setCaptionLabel(" +").setId(obj.hashCode()).setPosition(-15, 0).setSize(15, 15).setGroup("Track " + obj)
         .onClick(new CallbackListener() 
       {
         public void controlEvent(CallbackEvent theEvent) 
         {
-          controller.addSegment(theEvent.getController().getName(), frames, 200);
+          String track = theEvent.getController().getParent().getName();          
+          Segment seg = new Segment(controller, track);
         }
       }
-      );           
+      );   
       tPosY += (trackHeight + spacing*2);
     }
 
-    //object cp5 controls - slider for now
-    // sooo got an issue here - how to pass down the min-max values for the controller?!
+    //object cp5 controls - slider for now 
     for (String obj : tracks.keySet())
     {
       gui.addGroup("Control "+obj).setPosition(int(wWidth*wLeft), cPosY).setSize(int((wWidth/2)), trackHeight).setBackgroundColor(color(255, 50)).disableCollapse();
@@ -123,27 +118,51 @@ private class Animator extends PApplet
                 float value = theEvent.getController().getValue();
                 Field field = cls.getDeclaredFields()[i];
                 field.setAccessible(true);
-                try {
+                try 
+                {
                   field.set(obj, value);
                 } 
                 catch(Exception e) {
                   println(e);
-                }         
+                }
               }
             }
           }
         }
       }
       );
+
+      if (minmax.containsKey(obj))
+      {
+        gui.get(Slider.class, obj).setRange(minmax.get(obj)[0], minmax.get(obj)[1]);
+      }
+
       cPosY += (trackHeight + spacing*2);
     }
   }
 
 
+  void newTrack(Object obj, String field, float min, float max)
+  {
+    tracks.put(field, obj);
+    float [] mm = new float[]{min, max};
+    minmax.put(field, mm);
+  }
 
+  void newTrack( String field, float min, float max)
+  {
+    tracks.put(field, parent);
+    float [] mm = new float[]{min, max};
+    minmax.put(field, mm);
+  }
+  
   void newTrack(Object obj, String field)
   {    
-    // here we make Segment objects for both ani and cp5 and store them
     tracks.put(field, obj);
+  }
+
+  void newTrack(String field)
+  {    
+    tracks.put(field, parent);
   }
 }
