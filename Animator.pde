@@ -15,6 +15,7 @@ private class Animator extends PApplet
   private Ani master;
   private int frames;
   private Map <String, Object> tracks = new HashMap<String, Object>();
+  private Map <String, Track> Tracks = new HashMap<String, Track>();
   private Map <String, float[]> minmax = new HashMap<String, float[]>();
 
   Animator(PApplet _p, float _l, int _w, int _h)
@@ -156,8 +157,10 @@ private class Animator extends PApplet
   // slider2D controls with default values 100, assumes variable is in parent sketch
   void newTrack(String field_1, String field_2)
   {
-    tracks.put("2d", parent); // tttttttthiiis does not work because key needs to be unique!!
-    println(tracks.size());
+    Track track = new Track(cp5type.SLIDER2D, field_1, field_2, parent);
+    Tracks.put(track.toString(), track);
+    println(track.toString());
+
   }
 
   // slider control with custom min and max values, variable in custom object class 
@@ -185,6 +188,9 @@ private class Animator extends PApplet
   // slider control with default value 100, assumes variable is in parent sketch
   void newTrack(String field) 
   {    
-    tracks.put(field, parent);
+    Track track = new Track(cp5type.SLIDER, field, parent);
+    Tracks.put(track.toString(), track);
+    println(track.toString());
+    //tracks.put(field, parent);
   }
 }
