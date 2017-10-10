@@ -38,6 +38,44 @@ private class Controller
   //  a.rect(0,0,17,80);    
   //}
 
+  float getTargetValue(String target)
+  {
+    float targetValue = 0;
+    try
+    {
+      Field field = a.tracks.get(target).getClass().getDeclaredField(target);
+      field.setAccessible(true);
+      targetValue = field.getFloat(a.tracks.get(target));
+    } 
+    catch(Exception e)
+    {
+      println(e);
+    }   
+    return targetValue;
+  }
+
+  void setTargetValue(String target, float value)
+  {
+    Object obj = a.tracks.get(target);
+    Class cls = obj.getClass();
+    for (int i = 0; i < cls.getDeclaredFields().length; i++)
+    {
+      if (cls.getDeclaredFields()[i].getName().equals(target))
+      {        
+        Field field = cls.getDeclaredFields()[i];
+        field.setAccessible(true);
+        try 
+        {
+          field.set(obj, value);
+        } 
+        catch(Exception e)
+        {
+          println(e);
+        }
+      }
+    }
+  }
+
 
   void scrollTimeLine(float mX, float mY, boolean mP) 
   {        
@@ -48,7 +86,7 @@ private class Controller
       a.master.pause();
       for (Segment segment : Segments.values())
       {
-       segment.ani.pause();
+        segment.ani.pause();
       }
     }
     if (mX > needleX-20 && mX < needleX+20 && (mY > needleY-needleH && mY < needleY+needleH))

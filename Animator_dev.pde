@@ -14,10 +14,11 @@ void setup()
 {
   window = new Animator(this, 2, 728, 512);
   
-  window.newTrack("rWidth", -width, width); 
-  window.newTrack("rHeight");
+  //window.newTrack("rWidth", -width, width); 
+  //window.newTrack("rHeight");
   //window.newTrack(circle, "R", 0, 400);
-  
+  window.newTrack("rWidth", "rHeight");
+  window.newTrack("x", "y");
   //window.newTrack(this.xy, "x");
   //window.newTrack(this.xy, "y");
 }

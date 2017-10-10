@@ -100,37 +100,32 @@ private class Animator extends PApplet
 
     //object cp5 controls - slider for now 
     for (String obj : tracks.keySet())
-    {
-      gui.addGroup("Control "+obj).setPosition(int(wWidth*wLeft), cPosY).setSize(int((wWidth/2)), trackHeight).setBackgroundColor(color(255, 50)).disableCollapse();
-      gui.addSlider(obj).setGroup("Control "+obj).setPosition(5, 5).setSize(int((wWidth/2)*wRight), 10)
-        .onChange(new CallbackListener()
+    { 
+      if (!obj.equals("2d"))
       {
-        public void controlEvent(CallbackEvent theEvent) 
+
+        gui.addGroup("Control "+obj).setPosition(int(wWidth*wLeft), cPosY).setSize(int((wWidth/2)), trackHeight).setBackgroundColor(color(255, 50)).disableCollapse();
+        gui.addSlider(obj).setGroup("Control "+obj).setPosition(5, 5).setSize(int((wWidth/2)*wRight), 10).setValue(controller.getTargetValue(obj))
+          .onChange(new CallbackListener()
         {
-          if (theEvent.getAction()==ControlP5.ACTION_BROADCAST)
+          public void controlEvent(CallbackEvent theEvent) 
           {
-            Object obj = tracks.get(theEvent.getController().getName());
-            Class cls = obj.getClass();
-            for (int i = 0; i < cls.getDeclaredFields().length; i++)
+            if (theEvent.getAction()==ControlP5.ACTION_BROADCAST)
             {
-              if (cls.getDeclaredFields()[i].getName().equals(theEvent.getController().getName()))
-              {
-                float value = theEvent.getController().getValue();
-                Field field = cls.getDeclaredFields()[i];
-                field.setAccessible(true);
-                try 
-                {
-                  field.set(obj, value);
-                } 
-                catch(Exception e) {
-                  println(e);
-                }
-              }
+              String target = theEvent.getController().getName();
+              float value = theEvent.getController().getValue();
+              controller.setTargetValue(target, value);
             }
           }
         }
+        );
       }
-      );
+      if (obj.equals("2d"))
+      {
+        gui.addGroup("Control "+obj).setPosition(int(wWidth*wLeft), cPosY).setSize(int((wWidth/4)), int(wWidth/4)).setBackgroundColor(color(255, 50)).disableCollapse();
+        gui.addSlider2D(obj).setGroup("Control "+obj).setPosition(5, 5).setSize(int((wWidth/4)*wRight), int((wWidth/4)*wRight));//.setValue(controller.getTargetValue(obj));
+      }
+
 
       if (minmax.containsKey(obj))
       {
@@ -141,7 +136,31 @@ private class Animator extends PApplet
     }
   }
 
+  // soooo basically, how do I differentiate between control types?!
 
+  // slider2D controls with custom min and max values, variable in custom object class
+  void newTrack(Object obj, String field_1, String field_2, float min_1, float max_1, float min_2, float max_2)
+  {
+  }
+
+  // slider2D controls with custom min and max values, assumes variable is in parent sketch
+  void newTrack(String field_1, String field_2, float min_1, float max_1, float min_2, float max_2)
+  {
+  }
+
+  // slider2D controls with default values 100, variable in custom object class 
+  void newTrack(Object obj, String field_1, String field_2)
+  {
+  }
+
+  // slider2D controls with default values 100, assumes variable is in parent sketch
+  void newTrack(String field_1, String field_2)
+  {
+    tracks.put("2d", parent); // tttttttthiiis does not work because key needs to be unique!!
+    println(tracks.size());
+  }
+
+  // slider control with custom min and max values, variable in custom object class 
   void newTrack(Object obj, String field, float min, float max)
   {
     tracks.put(field, obj);
@@ -149,19 +168,22 @@ private class Animator extends PApplet
     minmax.put(field, mm);
   }
 
-  void newTrack( String field, float min, float max)
+  // slider control with custom min and max values, assumes variable is in parent sketch
+  void newTrack(String field, float min, float max)
   {
     tracks.put(field, parent);
     float [] mm = new float[]{min, max};
     minmax.put(field, mm);
   }
-  
+
+  // slider control with default value 100, variable in custom object class 
   void newTrack(Object obj, String field)
   {    
     tracks.put(field, obj);
   }
 
-  void newTrack(String field)
+  // slider control with default value 100, assumes variable is in parent sketch
+  void newTrack(String field) 
   {    
     tracks.put(field, parent);
   }
