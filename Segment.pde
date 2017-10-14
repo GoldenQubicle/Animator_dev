@@ -12,16 +12,16 @@ private class Segment
 
   Segment(Controller _c, String track)
   {
-    c = _c;
-    String field = track.substring(6, track.length());
-    Object obj = _c.a.tracks.get(field);
+     c = _c;
+    String field = _c.a.Tracks.get(track).Field;
+    Object obj = _c.a.Tracks.get(track).obj;
     String k = track + random(1000);
 
     ani = new Ani(obj, _c.a.frames, 0.0, field, 200, Ani.LINEAR);
     ani.setPlayMode(Ani.FORWARD);
     ani.noRepeat();
 
-    c.a.gui.addScrollableList(k).setGroup(track).setPosition(0, 0).setSize(int(_c.a.wWidth*_c.a.wRight), 50).setItems(EasingNames).setBarHeight(15)
+    c.a.gui.addScrollableList(k).setGroup("Track "+ track).setPosition(0, 0).setSize(int(_c.a.wWidth*_c.a.wRight), 50).setItems(EasingNames).setBarHeight(15)
       .onClick(new CallbackListener() 
     {
       public void controlEvent(CallbackEvent theEvent) 

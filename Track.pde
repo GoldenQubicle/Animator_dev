@@ -1,25 +1,26 @@
 private class Track
 {
   private cp5type control;
-  private String field, field2;
+  private String Field, Field2, Key;
   private Object obj;
 
-  Track(cp5type control, String field, Object obj)
+  Track(cp5type control, String field, Object obj, String hk)
   {
     this.control = control;
-    this.field = field;
+    this.Field = field;
     this.obj = obj;
+    this.Key = hk;
   }
 
-  Track(cp5type control, String field, String field2, Object obj)
+  Track(cp5type control, String field, String field2, Object obj, String hk)
   {
     this.control = control;
-    this.field = field;
-    this.field2 = field2;
+    this.Field = field;
+    this.Field2 = field2;
     this.obj = obj;
+    this.Key = hk;
   }
 }
-
 
 private enum cp5type 
 {

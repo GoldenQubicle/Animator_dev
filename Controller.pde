@@ -2,8 +2,11 @@ private class Controller
 {
   Animator a;
   private Map<String, Segment>Segments;
-
   private int needleX, needleY, needleH;
+  private int trackHeight = 25;
+  private int cPosY = 10;
+  private int spacing = 10;
+  private int tPosY;
   private PFont font;
   Ani ani;
 
@@ -17,65 +20,135 @@ private class Controller
     font = createFont("Symbola.ttf", 128);
   }
 
-  //void characterdesign()
-  //{
-  //  fill(255);
-  //  a.textFont(font);
-  //  char play = 0x23F5;
-  //  char pause = 0x23F8;
-  //  char stop = 0x23F9;
-  //  char begin = 0x23EE;
-  //  char end = 0x23ED;
-  //  char nextFrame = 0x23E9; 
-  //  char prevFrame = 0x23EA;
-  //  char control[] = {play, pause, stop, begin, end, nextFrame, prevFrame};
-  //  String controls = new String(control);
-  //  a.text(controls, 0, a.wHeight/2);
 
+  void setupTracks()
+  {
+    tPosY = a.wHeight/2 + a.cHeight + spacing;
 
-  //  // basic shapes - button class?!
-  //  a.triangle(0, 0, 40, 40, 0, 80);
-  //  a.rect(0,0,17,80);    
-  //}
+    for (Track t : a.Tracks.values())
+    {
+      timeLine(t.Key);
+      switch(t.control)
+      {
+      case SLIDER:
+        addSlider(t.Key, t.Field);
+        break;
+      case SLIDER2D:
+        addSlider2D(t.Key, t.Field, t.Field2);
+        break;
+      case COLOR:
+        break;
+      }
+      tPosY += (trackHeight + spacing*2);
+      cPosY += (trackHeight + spacing*2);
+    }
+  }       
 
-  float getTargetValue(String target)
+  void addSlider2D(String target, String field_1, String field_2)
+  {
+    //println(target, field_1, field_2);
+    a.gui.addGroup("Control "+ target).setPosition(int(a.wWidth*a.wLeft), cPosY).setSize(int((a.wWidth/4)), int(a.wWidth/4)).setBackgroundColor(color(255, 50)).disableCollapse();
+    a.gui.addSlider2D(target).setGroup("Control "+ target).setPosition(5, 5).setSize(int((a.wWidth/4)*a.wRight), int((a.wWidth/4)*a.wRight)).setValue(getTargetValue(target, field_1), getTargetValue(target, field_2))
+      .onChange(new CallbackListener()
+    {
+      public void controlEvent(CallbackEvent theEvent) 
+      {
+        if (theEvent.getAction()==ControlP5.ACTION_BROADCAST)
+        {
+          String target = theEvent.getController().getName();
+          float value1 = theEvent.getController().getArrayValue()[0];
+          float value2 = theEvent.getController().getArrayValue()[1];
+          setTargetValue(target, a.Tracks.get(target).Field, value1);
+          setTargetValue(target, a.Tracks.get(target).Field2, value2);
+          ;
+        }
+      }
+    }
+    );
+    if (a.minmax.containsKey(target))
+    {
+      a.gui.get(Slider2D.class, target).setMinMax(a.minmax.get(target)[0], a.minmax.get(target)[2], a.minmax.get(target)[1], a.minmax.get(target)[3]);
+    }
+  }
+
+  void addSlider(String target, String field)
+  {
+    a.gui.addGroup("Control "+ target).setCaptionLabel(field).setPosition(int(a.wWidth*a.wLeft), cPosY).setSize(int((a.wWidth/2)), trackHeight).setBackgroundColor(color(255, 50)).disableCollapse();
+    a.gui.addSlider(target).setCaptionLabel("").setGroup("Control "+ target).setPosition(5, 5).setSize(int((a.wWidth/2)*a.wRight), 10).setValue(getTargetValue(target, field))
+      .onChange(new CallbackListener()
+    {
+      public void controlEvent(CallbackEvent theEvent) 
+      {
+        if (theEvent.getAction()==ControlP5.ACTION_BROADCAST)
+        {
+          String target = theEvent.getController().getName();
+          String field = a.gui.get(Group.class, theEvent.getController().getParent().getName()).getCaptionLabel().getText();
+          float value = theEvent.getController().getValue();
+          setTargetValue(target, field, value);
+        }
+      }
+    }
+    );
+
+    if (a.minmax.containsKey(target))
+    {
+      a.gui.get(Slider.class, target).setRange(a.minmax.get(target)[0], a.minmax.get(target)[1]);
+    }
+  }
+
+  void timeLine(String target)
+  {
+    a.gui.addGroup("Track "+ target).setPosition(int(a.wWidth*a.wLeft), tPosY).setSize(int(a.wWidth*a.wRight), trackHeight).setBackgroundColor(color(255, 50)).disableCollapse();
+    a.gui.addButton(target + "add").setCaptionLabel(" +").setPosition(-15, 0).setSize(15, 15).setGroup("Track " + target)
+      .onClick(new CallbackListener() 
+    {
+      public void controlEvent(CallbackEvent theEvent) 
+      {
+        String target = theEvent.getController().getName();    
+        target = target.substring(0, target.length()-3);
+        Segment seg = new Segment(a.controller, target);
+      }
+    }
+    );
+  }
+
+  float getTargetValue(String target, String field)
   {
     float targetValue = 0;
     try
     {
-      Field field = a.tracks.get(target).getClass().getDeclaredField(target);
-      field.setAccessible(true);
-      targetValue = field.getFloat(a.tracks.get(target));
+      Field f = a.Tracks.get(target).obj.getClass().getDeclaredField(field);
+      f.setAccessible(true);
+      targetValue = f.getFloat(a.Tracks.get(target).obj);
     } 
     catch(Exception e)
     {
-      println(e);
+      println(e, "in getter");
     }   
     return targetValue;
   }
 
-  void setTargetValue(String target, float value)
+  void setTargetValue(String target, String field, float value)
   {
-    Object obj = a.tracks.get(target);
+    Object obj = a.Tracks.get(target).obj;
     Class cls = obj.getClass();
     for (int i = 0; i < cls.getDeclaredFields().length; i++)
     {
-      if (cls.getDeclaredFields()[i].getName().equals(target))
+      if (cls.getDeclaredFields()[i].getName().equals(field))
       {        
-        Field field = cls.getDeclaredFields()[i];
-        field.setAccessible(true);
+        Field f = cls.getDeclaredFields()[i];
+        f.setAccessible(true);
         try 
         {
-          field.set(obj, value);
+          f.set(obj, value);
         } 
         catch(Exception e)
         {
-          println(e);
+          println(e, "in setter");
         }
       }
     }
   }
-
 
   void scrollTimeLine(float mX, float mY, boolean mP) 
   {        
