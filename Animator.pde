@@ -14,7 +14,6 @@ private class Animator extends PApplet
   private int wWidth, wHeight, cHeight;
   private Ani master;
   private int frames;
-  //private Map <String, Object> tracks = new HashMap<String, Object>();
   private Map <String, Track> Tracks = new HashMap<String, Track>();
   private Map <String, float[]> minmax = new HashMap<String, float[]>();
 
@@ -53,23 +52,26 @@ private class Animator extends PApplet
    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
 
   // slider control with default value 100, assumes variable is in parent sketch
-  void newTrack(String field) 
-  {    
-    Track track = new Track(cp5type.SLIDER, field, parent, "track" + Tracks.size());
+  void newTrack(String field)  
+  {   
+    String fields [] = new String [] {field};
+    Track track = new Track(cp5type.SLIDER, fields, parent, "track" + Tracks.size());
     Tracks.put(track.Key, track);
   }
 
   // slider control with default value 100, variable in custom object class 
   void newTrack(Object obj, String field)
   {    
-    Track track = new Track(cp5type.SLIDER, field, obj, "track" + Tracks.size());
+    String fields [] = new String [] {field};
+    Track track = new Track(cp5type.SLIDER, fields, obj, "track" + Tracks.size());
     Tracks.put(track.Key, track);
   }
 
   // slider control with custom min and max values, assumes variable is in parent sketch
   void newTrack(String field, float min, float max)
   {
-    Track track = new Track(cp5type.SLIDER, field, parent, "track" + Tracks.size());
+    String fields [] = new String [] {field};
+    Track track = new Track(cp5type.SLIDER, fields, parent, "track" + Tracks.size());
     Tracks.put(track.Key, track);   
     float [] mm = new float[]{min, max};
     minmax.put(track.Key, mm);
@@ -78,7 +80,8 @@ private class Animator extends PApplet
   // slider control with custom min and max values, variable in custom object class 
   void newTrack(Object obj, String field, float min, float max)
   {
-    Track track = new Track(cp5type.SLIDER, field, obj, "track" + Tracks.size());
+    String fields [] = new String [] {field};
+    Track track = new Track(cp5type.SLIDER, fields, obj, "track" + Tracks.size());
     Tracks.put(track.Key, track);
     float [] mm = new float[]{min, max};
     minmax.put(track.Key, mm);
@@ -87,21 +90,24 @@ private class Animator extends PApplet
   // slider2D controls with default values 100, assumes variable is in parent sketch
   void newTrack(String field_1, String field_2)
   {
-    Track track = new Track(cp5type.SLIDER2D, field_1, field_2, parent, "track" + Tracks.size());
+    String fields [] = new String [] {field_1, field_2};
+    Track track = new Track(cp5type.SLIDER2D, fields, parent, "track" + Tracks.size());
     Tracks.put(track.Key, track);
   }
 
   // slider2D controls with default values 100, variable in custom object class 
   void newTrack(Object obj, String field_1, String field_2)
   {
-    Track track = new Track(cp5type.SLIDER2D, field_1, field_2, obj, "track" + Tracks.size());
+    String fields [] = new String [] {field_1, field_2};
+    Track track = new Track(cp5type.SLIDER2D, fields, obj, "track" + Tracks.size());
     Tracks.put(track.Key, track);
   }
 
   // slider2D controls with custom min and max values, assumes variable is in parent sketch
   void newTrack(String field_1, String field_2, float min_1, float max_1, float min_2, float max_2)  
   {
-    Track track = new Track(cp5type.SLIDER2D, field_1, field_2, parent, "track" + Tracks.size());
+    String fields [] = new String [] {field_1, field_2};
+    Track track = new Track(cp5type.SLIDER2D, fields, parent, "track" + Tracks.size());
     Tracks.put(track.Key, track);
     float [] mm = new float[]{min_1, max_1, min_2, max_2};
     minmax.put(track.Key, mm);
@@ -110,7 +116,8 @@ private class Animator extends PApplet
   // slider2D controls with custom min and max values, variable in custom object class
   void newTrack(Object obj, String field_1, String field_2, float min_1, float max_1, float min_2, float max_2)
   {
-    Track track = new Track(cp5type.SLIDER2D, field_1, field_2, obj, "track" + Tracks.size());
+    String fields [] = new String [] {field_1, field_2};
+    Track track = new Track(cp5type.SLIDER2D, fields, obj, "track" + Tracks.size());
     Tracks.put(track.Key, track);
     float [] mm = new float[]{min_1, max_1, min_2, max_2};
     minmax.put(track.Key, mm);

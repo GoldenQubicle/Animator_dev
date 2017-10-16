@@ -7,8 +7,7 @@ private class Controller
   private int cPosY = 10;
   private int spacing = 10;
   private int tPosY;
-  private PFont font;
-  Ani ani;
+  private  AniSequence seq;
 
   Controller(Animator _a)
   {
@@ -17,9 +16,7 @@ private class Controller
     needleX = int(a.wWidth*a.wLeft);
     needleY = int(a.wHeight/2);
     needleH = a.cHeight/2;
-    font = createFont("Symbola.ttf", 128);
   }
-
 
   void setupTracks()
   {
@@ -27,62 +24,42 @@ private class Controller
 
     for (Track t : a.Tracks.values())
     {
-      timeLine(t.Key);
+      trackGroup(t.Key, t.Fields);
       switch(t.control)
       {
       case SLIDER:
-        addSlider(t.Key, t.Field);
+        addSlider(t.Key, t.Fields[0]);
         break;
       case SLIDER2D:
-        addSlider2D(t.Key, t.Field, t.Field2);
+        addSlider2D(t.Key, t.Fields[0], t.Fields[1]);
         break;
       case COLOR:
         break;
       }
-      tPosY += (trackHeight + spacing*2);
+      tPosY += (trackHeight*t.Fields.length + spacing*2);
       cPosY += (trackHeight + spacing*2);
     }
   }       
 
-  void addSlider2D(String target, String field_1, String field_2)
-  {
-    //println(target, field_1, field_2);
-    a.gui.addGroup("Control "+ target).setPosition(int(a.wWidth*a.wLeft), cPosY).setSize(int((a.wWidth/4)), int(a.wWidth/4)).setBackgroundColor(color(255, 50)).disableCollapse();
-    a.gui.addSlider2D(target).setGroup("Control "+ target).setPosition(5, 5).setSize(int((a.wWidth/4)*a.wRight), int((a.wWidth/4)*a.wRight)).setValue(getTargetValue(target, field_1), getTargetValue(target, field_2))
-      .onChange(new CallbackListener()
-    {
-      public void controlEvent(CallbackEvent theEvent) 
-      {
-        if (theEvent.getAction()==ControlP5.ACTION_BROADCAST)
-        {
-          String target = theEvent.getController().getName();
-          float value1 = theEvent.getController().getArrayValue()[0];
-          float value2 = theEvent.getController().getArrayValue()[1];
-          setTargetValue(target, a.Tracks.get(target).Field, value1);
-          setTargetValue(target, a.Tracks.get(target).Field2, value2);
-          ;
-        }
-      }
-    }
-    );
-    if (a.minmax.containsKey(target))
-    {
-      a.gui.get(Slider2D.class, target).setMinMax(a.minmax.get(target)[0], a.minmax.get(target)[2], a.minmax.get(target)[1], a.minmax.get(target)[3]);
-    }
-  }
-
   void addSlider(String target, String field)
   {
-    a.gui.addGroup("Control "+ target).setCaptionLabel(field).setPosition(int(a.wWidth*a.wLeft), cPosY).setSize(int((a.wWidth/2)), trackHeight).setBackgroundColor(color(255, 50)).disableCollapse();
-    a.gui.addSlider(target).setCaptionLabel("").setGroup("Control "+ target).setPosition(5, 5).setSize(int((a.wWidth/2)*a.wRight), 10).setValue(getTargetValue(target, field))
+    a.gui.addGroup(target)
+      .setPosition(int(a.wWidth*a.wLeft), cPosY).setSize(int((a.wWidth/2)), trackHeight)
+      .setBackgroundColor(color(255, 50))
+      .disableCollapse();
+
+    a.gui.addSlider(field)
+      .setGroup(target).setPosition(5, 5)
+      .setSize(int((a.wWidth/2)*a.wRight), 10)
+      .setValue(getTargetValue(target, field))
       .onChange(new CallbackListener()
     {
       public void controlEvent(CallbackEvent theEvent) 
       {
         if (theEvent.getAction()==ControlP5.ACTION_BROADCAST)
         {
-          String target = theEvent.getController().getName();
-          String field = a.gui.get(Group.class, theEvent.getController().getParent().getName()).getCaptionLabel().getText();
+          String target = theEvent.getController().getParent().getName();
+          String field = theEvent.getController().getName();
           float value = theEvent.getController().getValue();
           setTargetValue(target, field, value);
         }
@@ -92,21 +69,76 @@ private class Controller
 
     if (a.minmax.containsKey(target))
     {
-      a.gui.get(Slider.class, target).setRange(a.minmax.get(target)[0], a.minmax.get(target)[1]);
+      a.gui.get(Slider.class, field)
+        .setRange(a.minmax.get(target)[0], a.minmax.get(target)[1]);
     }
   }
 
-  void timeLine(String target)
+
+  void addSlider2D(String target, String field_1, String field_2)
   {
-    a.gui.addGroup("Track "+ target).setPosition(int(a.wWidth*a.wLeft), tPosY).setSize(int(a.wWidth*a.wRight), trackHeight).setBackgroundColor(color(255, 50)).disableCollapse();
-    a.gui.addButton(target + "add").setCaptionLabel(" +").setPosition(-15, 0).setSize(15, 15).setGroup("Track " + target)
-      .onClick(new CallbackListener() 
+    a.gui.addGroup(target)
+      .setPosition(int(a.wWidth*a.wLeft), cPosY)
+      .setSize(int((a.wWidth/4)), int(a.wWidth/4))
+      .setBackgroundColor(color(255, 50))
+      .disableCollapse();
+
+    a.gui.addSlider2D(target+"2d")
+      .setGroup(target).setPosition(5, 5)
+      .setSize(int((a.wWidth/4)*a.wRight), int((a.wWidth/4)*a.wRight))
+      .setValue(getTargetValue(target, field_1), getTargetValue(target, field_2))
+      .onChange(new CallbackListener()
     {
       public void controlEvent(CallbackEvent theEvent) 
       {
-        String target = theEvent.getController().getName();    
-        target = target.substring(0, target.length()-3);
-        Segment seg = new Segment(a.controller, target);
+        if (theEvent.getAction()==ControlP5.ACTION_BROADCAST)
+        {
+          String target = theEvent.getController().getParent().getName();
+          float value1 = theEvent.getController().getArrayValue()[0];
+          float value2 = theEvent.getController().getArrayValue()[1];
+          setTargetValue(target, a.Tracks.get(target).Fields[0], value1);
+          setTargetValue(target, a.Tracks.get(target).Fields[1], value2);
+          ;
+        }
+      }
+    }
+    );
+    if (a.minmax.containsKey(target))
+    {
+      a.gui.get(Slider2D.class, target+"2d")
+        .setMinMax(a.minmax.get(target)[0], a.minmax.get(target)[2], a.minmax.get(target)[1], a.minmax.get(target)[3]);
+    }
+  }
+
+  void trackGroup(String target, String[] fields)
+  {   
+    String trackGroup = "tg"+target;
+
+    a.gui.addGroup(trackGroup)
+      .setPosition(int(a.wWidth*a.wLeft), tPosY)
+      .setSize(int(a.wWidth*a.wRight), trackHeight*fields.length)
+      .setBackgroundColor(color(255, 50))
+      .disableCollapse();
+
+    for (int i = 0; i < fields.length; i++)
+    {
+      addButton(trackGroup, fields[i], i);
+    }
+  }
+
+  void addButton(String trackGroup, String field, int id)
+  {
+    a.gui.addButton(trackGroup + field + "add")
+      .setCaptionLabel(" +").setPosition(-15, 25*id)
+      .setSize(15, 15).setGroup(trackGroup)
+      .setId(id)
+      .onClick(new CallbackListener() 
+    {
+      public void controlEvent(CallbackEvent theEvent) 
+      {        
+        String target = theEvent.getController().getParent().getName().substring(2);
+        int fieldId = theEvent.getController().getId();
+        Segment seg = new Segment(a.controller, target, fieldId);
       }
     }
     );
@@ -157,10 +189,7 @@ private class Controller
     if (mX > needleX-20 && mX < needleX+20 && mP && a.master.isPlaying() && (mY > needleY-needleH && mY < needleY+needleH))
     {
       a.master.pause();
-      for (Segment segment : Segments.values())
-      {
-        segment.ani.pause();
-      }
+      seq.pause();
     }
     if (mX > needleX-20 && mX < needleX+20 && (mY > needleY-needleH && mY < needleY+needleH))
     {
@@ -175,10 +204,7 @@ private class Controller
       a.rect(needleX-5, needleY-needleH, 10, needleH*2);
 
       a.master.seek(map(mX, a.wWidth*a.wLeft, a.wWidth*a.wRight, 0, 1));
-      for (Segment segment : Segments.values())
-      {
-        segment.ani.seek(map(mX, a.wWidth*a.wLeft, a.wWidth*a.wRight, 0, 1));
-      }
+      seq.seek(map(mX, a.wWidth*a.wLeft, a.wWidth*a.wRight, 0, 1));
     }
     if (a.master.isEnded())
     {
@@ -186,30 +212,36 @@ private class Controller
     }
   }
 
+  void createSeq()
+  {
+    seq = new AniSequence(a.parent);
+    seq.beginSequence();
+    seq.beginStep();
+
+    for (Segment segment : Segments.values())
+    {
+      seq.add(segment.ani);
+    }
+    seq.endStep();
+    seq.endSequence();
+  }
+
   void playpause()
   {
     if (!a.master.isPlaying() && !a.isPlaying)
     {
+      createSeq();
       a.isPlaying = true;
       a.master.start();
-      for (Segment segment : Segments.values())
-      {
-        segment.ani.start();
-      }
+      seq.start();
     } else if (a.master.isPlaying() && a.isPlaying)
     {
       a.master.pause();
-      for (Segment segment : Segments.values())
-      {
-        segment.ani.pause();
-      }
+      seq.pause();
     } else if (!a.master.isPlaying() && a.isPlaying) 
     {
       a.master.resume();
-      for (Segment segment : Segments.values())
-      {
-        segment.ani.resume();
-      }
+      seq.resume();
     }
   }
 }

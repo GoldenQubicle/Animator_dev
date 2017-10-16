@@ -1,22 +1,15 @@
 private class Track
 {
   private cp5type control;
-  private String Field, Field2, Key;
+  private String Key;
+  private String [] Fields;
   private Object obj;
 
-  Track(cp5type control, String field, Object obj, String hk)
+  Track(cp5type control, String[] fields, Object obj, String hk)
   {
+    // TODO: type check fields in order to setup different track type (i.e. toggle for bool)    
     this.control = control;
-    this.Field = field;
-    this.obj = obj;
-    this.Key = hk;
-  }
-
-  Track(cp5type control, String field, String field2, Object obj, String hk)
-  {
-    this.control = control;
-    this.Field = field;
-    this.Field2 = field2;
+    this.Fields = fields;
     this.obj = obj;
     this.Key = hk;
   }
