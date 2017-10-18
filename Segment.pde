@@ -9,13 +9,14 @@ private class Segment
   protected float End;   
   protected ScrollableList easings;
   protected Ani ani;
+  private boolean hoover = false;
 
   Segment(Controller _c, String track, int fieldId)
   {
     c = _c;
     String field = _c.a.Tracks.get(track).Fields[fieldId];
     Object obj = _c.a.Tracks.get(track).obj;
-    String aniKey = track + random(1000); // hacky
+    String aniKey = "aniSegment" + int(random(1000)); // hacky
 
     ani = new Ani(obj, _c.a.frames, 0.0, field, 200, Ani.LINEAR);
     ani.setPlayMode(Ani.FORWARD);
@@ -27,7 +28,23 @@ private class Segment
       .setPosition(0, 25*fieldId)
       .setSize(int(_c.a.wWidth*_c.a.wRight), 50)
       .setItems(EasingNames).setBarHeight(15)
-      .onClick(new CallbackListener() 
+      .onDrag(new CallbackListener() 
+    {
+      public void controlEvent(CallbackEvent theEvent) 
+      {   
+        hoover = true;
+      }
+    }
+    )
+    .onLeave(new CallbackListener() 
+    {
+      public void controlEvent(CallbackEvent theEvent) 
+      {   
+        hoover = false;
+      }
+    }
+    )
+    .onClick(new CallbackListener() 
     {
       public void controlEvent(CallbackEvent theEvent) 
       {   
@@ -37,4 +54,9 @@ private class Segment
     );
     c.Segments.put(aniKey, this);
   }
+
+
+  // hmm lets think for a moment
+  // basically in the callback (on drag, on click?) get the mouse position, determine in which third it is (i.e. start, mid, end)
+  // send that and the segmentKey down to a handler
 }

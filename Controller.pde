@@ -52,20 +52,7 @@ private class Controller
       .setGroup(target).setPosition(5, 5)
       .setSize(int((a.wWidth/2)*a.wRight), 10)
       .setValue(getTargetValue(target, field))
-      .onChange(new CallbackListener()
-    {
-      public void controlEvent(CallbackEvent theEvent) 
-      {
-        if (theEvent.getAction()==ControlP5.ACTION_BROADCAST)
-        {
-          String target = theEvent.getController().getParent().getName();
-          String field = theEvent.getController().getName();
-          float value = theEvent.getController().getValue();
-          setTargetValue(target, field, value);
-        }
-      }
-    }
-    );
+      .plugTo(a.Tracks.get(target).obj, field);
 
     if (a.minmax.containsKey(target))
     {
@@ -86,7 +73,7 @@ private class Controller
     a.gui.addSlider2D(target+"2d")
       .setGroup(target).setPosition(5, 5)
       .setSize(int((a.wWidth/4)*a.wRight), int((a.wWidth/4)*a.wRight))
-      .setValue(getTargetValue(target, field_1), getTargetValue(target, field_2))
+      .setValue(getTargetValue(target, field_1), getTargetValue(target, field_2))   
       .onChange(new CallbackListener()
     {
       public void controlEvent(CallbackEvent theEvent) 
