@@ -137,44 +137,49 @@ private class Animator extends PApplet
     controller.scrollTimeLine(mouseX, mouseY, mousePressed);
   } 
 
-  public void controlEvent(CallbackEvent theEvent)
-  {
-    //println(theEvent.getController().getParent().getName());
-    if (theEvent.getController().getName().contains("aniSegment"))
-    {
-      String segmentKey = theEvent.getController().getName();
-      Segment seg = controller.Segments.get(segmentKey);
-      //println(theEvent.getController().getWidth(), theEvent.getController().getAbsolutePosition()[0]);
-      float section = theEvent.getController().getWidth()/3;
+  //public void controlEvent(CallbackEvent theEvent)
+  //{
 
-      float start = theEvent.getController().getPosition()[0];
-      float mid1 = section; 
-      float mid2 = section+section;
-      float end = theEvent.getController().getWidth();
+  //  float pX = theEvent.getController().getPointer().x();     
+  //  //println(pX); // okay so the issue here is that as soon as mousePressed callback event is no longer being active. . . .
+  //  // i.e. here I need to grab the delta X, i.e. from pointer to the relevant seciotn point, and pass on into a controller method, and put that into draw()
 
-      float pX = theEvent.getController().getPointer().x();     
+  //  //println(theEvent.getController().getParent().getName());
+  //  if (theEvent.getController().getName().contains("aniSegment"))
+  //  {
+  //    String segmentKey = theEvent.getController().getName();
+  //    Segment seg = controller.Segments.get(segmentKey);
+  //    //println(theEvent.getController().getWidth(), theEvent.getController().getAbsolutePosition()[0]);
+  //    float section = theEvent.getController().getWidth()/3;
 
+  //    float start = theEvent.getController().getPosition()[0];
+  //    float mid1 = section; 
+  //    float mid2 = section+section;
+  //    float end = theEvent.getController().getWidth();
 
-      if ( pX >= start && pX <= mid1)
-      {
-        println("left start");   
-        //seg.easings.setPosition(pX, theEvent.getController().getPosition()[1]);    
-        line(theEvent.getController().getAbsolutePosition()[0], theEvent.getController().getAbsolutePosition()[1], theEvent.getController().getAbsolutePosition()[0], height/2);
-      }
-      if (pX >= mid1 && pX <= mid2)
-      {
-        println("mid section");
-        //line(theEvent.getController().getAbsolutePosition()[0]+(theEvent.getController().getWidth()/2), theEvent.getController().getAbsolutePosition()[1], theEvent.getController().getAbsolutePosition()[0]+(theEvent.getController().getWidth()/2), height/2);
-      }
-      if (pX >= mid2 && pX <= end)
-      {
-        println("right end");
-        //line(theEvent.getController().getAbsolutePosition()[0]+theEvent.getController().getWidth(), theEvent.getController().getAbsolutePosition()[1], theEvent.getController().getAbsolutePosition()[0]+theEvent.getController().getWidth(), height/2);
-      }
-      //println(theEvent.getController().getPointer().x(), theEvent.getController().getWidth());
-      //println("segment check" + theEvent.getController().getName());
-    }
-  }
+  //    //float pX = theEvent.getController().getPointer().x();     
+  //    //println(pX); // okay so the issue here is that as soon as mousePressed the 
+  //    //seg.easings.setPosition(pX, theEvent.getController().getPosition()[1]);    
+
+  //    if ( pX >= start && pX <= mid1 && mousePressed)
+  //    {
+  //      //println("left start at " + pX);   
+  //      line(theEvent.getController().getAbsolutePosition()[0], theEvent.getController().getAbsolutePosition()[1], theEvent.getController().getAbsolutePosition()[0], height/2);
+  //    }
+  //    if (pX >= mid1 && pX <= mid2)
+  //    {
+  //      println("mid section");
+  //      //line(theEvent.getController().getAbsolutePosition()[0]+(theEvent.getController().getWidth()/2), theEvent.getController().getAbsolutePosition()[1], theEvent.getController().getAbsolutePosition()[0]+(theEvent.getController().getWidth()/2), height/2);
+  //    }
+  //    if (pX >= mid2 && pX <= end)
+  //    {
+  //      println("right end");
+  //      //line(theEvent.getController().getAbsolutePosition()[0]+theEvent.getController().getWidth(), theEvent.getController().getAbsolutePosition()[1], theEvent.getController().getAbsolutePosition()[0]+theEvent.getController().getWidth(), height/2);
+  //    }
+  //    //println(theEvent.getController().getPointer().x(), theEvent.getController().getWidth());
+  //    //println("segment check" + theEvent.getController().getName());
+  //  }
+  //}
 
   void keyPressed()
   {

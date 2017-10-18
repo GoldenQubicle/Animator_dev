@@ -22,7 +22,7 @@ private class Segment
     ani.setPlayMode(Ani.FORWARD);
     ani.noRepeat();
 
-    c.a.gui.addScrollableList(aniKey)
+    easings = c.a.gui.addScrollableList(aniKey)
       .setCaptionLabel("Easings")
       .setGroup("tg"+track)
       .setPosition(0, 25*fieldId)
@@ -31,8 +31,15 @@ private class Segment
       .onDrag(new CallbackListener() 
     {
       public void controlEvent(CallbackEvent theEvent) 
-      {   
-        hoover = true;
+      {      
+
+        int newWidth = int(theEvent.getController().getParent().getWidth()-c.a.mouseX);
+        int newXPos = int(theEvent.getController().getParent().getWidth()-newWidth);
+
+        theEvent.getController().setWidth(newWidth);
+        theEvent.getController().setPosition(newXPos, theEvent.getController().getPosition()[1]);
+
+        
       }
     }
     )
@@ -40,7 +47,7 @@ private class Segment
     {
       public void controlEvent(CallbackEvent theEvent) 
       {   
-        hoover = false;
+        //hoover = false;
       }
     }
     )
@@ -48,11 +55,14 @@ private class Segment
     {
       public void controlEvent(CallbackEvent theEvent) 
       {   
+        println("clicking");
+
         c.Segments.get(theEvent.getController().getName()).ani.setEasing(easing[int(theEvent.getController().getValue())]);
       }
     }
     );
     c.Segments.put(aniKey, this);
+    //println(c.Segments.size());
   }
 
 
