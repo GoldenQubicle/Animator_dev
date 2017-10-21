@@ -9,7 +9,8 @@ private class Segment
   protected float End;   
   protected ScrollableList easings;
   protected Ani ani;
-  private boolean hoover = false;
+  protected int pos = 0;
+  protected int wOld, xOld;
 
   Segment(Controller _c, String track, int fieldId)
   {
@@ -31,23 +32,34 @@ private class Segment
       .onDrag(new CallbackListener() 
     {
       public void controlEvent(CallbackEvent theEvent) 
-      {      
-
-        int newWidth = int(theEvent.getController().getParent().getWidth()-c.a.mouseX);
-        int newXPos = int(theEvent.getController().getParent().getWidth()-newWidth);
-
-        theEvent.getController().setWidth(newWidth);
-        theEvent.getController().setPosition(newXPos, theEvent.getController().getPosition()[1]);
-
+      {   
+        Segment seg = c.Segments.get(theEvent.getController().getName());
         
+        if (seg.pos == 1)
+        {        
+          int newXPos = int(map(c.a.mouseX, 0, c.a.wWidth, 0, theEvent.getController().getParent().getWidth()));
+          int newWidth = seg.wOld - newXPos;          
+          //println(newXPos, newWidth, seg.wOld);
+          seg.easings.setPosition(newXPos, theEvent.getController().getPosition()[1]);
+          seg.easings.setWidth(newWidth);
+        }
+        if (seg.pos == 2)
+        {
+          int newXPos = c.a.mouseX - int(theEvent.getController().getWidth()/2);
+          seg.easings.setPosition(newXPos, theEvent.getController().getPosition()[1]);
+        }
+        if (seg.pos == 3)
+        {
+          int newWidth =  theEvent.getController().getPointer().x();
+          seg.easings.setWidth(newWidth);
+        }
       }
     }
     )
-    .onLeave(new CallbackListener() 
+    .onRelease(new CallbackListener() 
     {
       public void controlEvent(CallbackEvent theEvent) 
-      {   
-        //hoover = false;
+      {
       }
     }
     )
