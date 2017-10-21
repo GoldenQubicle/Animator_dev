@@ -34,25 +34,25 @@ private class Segment
       public void controlEvent(CallbackEvent theEvent) 
       {   
         Segment seg = c.Segments.get(theEvent.getController().getName());
-
+         int trackWidth =  theEvent.getController().getParent().getWidth();
         if (seg.pos == 1)
         {        
-          int mX = int(map(c.a.mouseX, 0, c.a.wWidth, int((c.a.wWidth*c.a.wLeft)), theEvent.getController().getParent().getWidth()));
-          int newXPos = mX - seg.pX;
-          int newWidth = (seg.wOld - newXPos) + seg.xOld;                    
+          int mX = int(map(c.a.mouseX, 0, c.a.wWidth, int((c.a.wWidth*c.a.wLeft)), trackWidth));
+          int newXPos = constrain(mX - seg.pX, 0, trackWidth) ;
+          int newWidth = (seg.wOld - newXPos) + seg.xOld; 
           seg.easings.setPosition(newXPos, theEvent.getController().getPosition()[1]);
           seg.easings.setWidth(newWidth);
         }
         if (seg.pos == 2)
         {
           int mX = int(map(c.a.mouseX, 0, c.a.wWidth, int((c.a.wWidth*c.a.wLeft)), theEvent.getController().getParent().getWidth()));
-          int newXPos = mX - seg.wOld/2;
+          int newXPos = constrain(mX - seg.wOld/2, 0, trackWidth-seg.wOld) ;
           seg.easings.setPosition(newXPos, theEvent.getController().getPosition()[1]);
         }
         if (seg.pos == 3)
         {
           int mX = theEvent.getController().getPointer().x() - seg.pX;
-          int newWidth = seg.wOld + mX;
+          int newWidth = constrain(seg.wOld + mX, 0, trackWidth-seg.xOld);
           seg.easings.setWidth(newWidth);
         }
       }
@@ -69,18 +69,10 @@ private class Segment
     {
       public void controlEvent(CallbackEvent theEvent) 
       {   
-        println("clicking");
-
         c.Segments.get(theEvent.getController().getName()).ani.setEasing(easing[int(theEvent.getController().getValue())]);
       }
     }
     );
     c.Segments.put(aniKey, this);
-    //println(c.Segments.size());
   }
-
-
-  // hmm lets think for a moment
-  // basically in the callback (on drag, on click?) get the mouse position, determine in which third it is (i.e. start, mid, end)
-  // send that and the segmentKey down to a handler
 }

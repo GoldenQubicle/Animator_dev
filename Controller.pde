@@ -66,7 +66,7 @@ private class Controller
   {
     a.gui.addGroup(target)
       .setPosition(int(a.wWidth*a.wLeft), cPosY)
-      .setSize(int((a.wWidth/4)), int(a.wWidth/4))
+      .setSize(int((a.wWidth/4)), int(a.wWidth/4)) // BAAAD dont make this depenend on window width!
       .setBackgroundColor(color(255, 50))
       .disableCollapse();
 

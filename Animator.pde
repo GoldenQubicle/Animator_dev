@@ -43,7 +43,7 @@ private class Animator extends PApplet
     Ani.init(parent);
     Ani.setDefaultTimeMode(Ani.FRAMES);
     Ani.noAutostart();
-    playBackControls();
+    timeLine();
     controller.setupTracks();
   }
 
@@ -123,7 +123,7 @@ private class Animator extends PApplet
     minmax.put(track.Key, mm);
   }
 
-  void playBackControls()
+  void timeLine()
   {
     gui.addGroup("playback").setPosition(int((wWidth*wLeft)), wHeight/2-cHeight/2).setSize(int((wWidth*wRight)), cHeight).setBackgroundColor(color(255, 50)).disableCollapse();
     master = new Ani(controller, frames, 0.0, "needleX", ((wWidth*wLeft)+(wWidth*wRight)), Ani.LINEAR);
@@ -158,19 +158,18 @@ private class Animator extends PApplet
       if ( pX >= start && pX <= mid1)
       {
         seg.pos = 1;
-        println("left start at " + pX);   
+        //println("left start at " + pX);   
       }
       if (pX >= mid1 && pX <= mid2)
       {
-        println("mid section");
+        //println("mid section");
         seg.pos = 2;
       }
       if (pX >= mid2 && pX <= end)
       {
         seg.pos = 3;
-        println("right end");
+        //println("right end");
       }
-
     }
   }
 
