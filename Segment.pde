@@ -19,7 +19,7 @@ private class Segment
     Object obj = _c.a.Tracks.get(track).obj;
     String aniKey = "aniSegment" + int(random(1000)); // hacky
 
-    ani = new Ani(obj, _c.a.frames, 0.0, field, 200, Ani.LINEAR);
+    ani = new Ani(obj, Duration, Start, field, 200, Ani.LINEAR);
     ani.setPlayMode(Ani.FORWARD);
     ani.noRepeat();
 
@@ -55,7 +55,8 @@ private class Segment
           int newWidth = constrain(seg.wOld + mX, 0, trackWidth-seg.xOld);
           seg.easings.setWidth(newWidth);
         }
-      }
+       updateAni(seg, trackWidth);
+      }      
     }
     )
     .onRelease(new CallbackListener() 
@@ -74,5 +75,14 @@ private class Segment
     }
     );
     c.Segments.put(aniKey, this);
+  }
+  
+  void updateAni(Segment seg, int trackWidth)
+  {
+  Start = int(map(seg.easings.getPosition()[0], 0, trackWidth, 0,c.a.frames));
+  End = int(map(seg.easings.getPosition()[0]+seg.easings.getWidth(), 0, trackWidth, 0,c.a.frames));
+  Duration = End - Start;
+  ani.setDelay(Start);
+  ani.setDuration(Duration);
   }
 }
