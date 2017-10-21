@@ -10,7 +10,7 @@ private class Segment
   protected ScrollableList easings;
   protected Ani ani;
   protected int pos = 0;
-  protected int wOld, xOld;
+  protected int wOld, xOld, pX;
 
   Segment(Controller _c, String track, int fieldId)
   {
@@ -34,23 +34,25 @@ private class Segment
       public void controlEvent(CallbackEvent theEvent) 
       {   
         Segment seg = c.Segments.get(theEvent.getController().getName());
-        
+
         if (seg.pos == 1)
         {        
-          int newXPos = int(map(c.a.mouseX, 0, c.a.wWidth, 0, theEvent.getController().getParent().getWidth()));
-          int newWidth = seg.wOld - newXPos;          
-          //println(newXPos, newWidth, seg.wOld);
+          int mX = int(map(c.a.mouseX, 0, c.a.wWidth, int((c.a.wWidth*c.a.wLeft)), theEvent.getController().getParent().getWidth()));
+          int newXPos = mX - seg.pX;
+          int newWidth = (seg.wOld - newXPos) + seg.xOld;                    
           seg.easings.setPosition(newXPos, theEvent.getController().getPosition()[1]);
           seg.easings.setWidth(newWidth);
         }
         if (seg.pos == 2)
         {
-          int newXPos = c.a.mouseX - int(theEvent.getController().getWidth()/2);
+          int mX = int(map(c.a.mouseX, 0, c.a.wWidth, int((c.a.wWidth*c.a.wLeft)), theEvent.getController().getParent().getWidth()));
+          int newXPos = mX - seg.wOld/2;
           seg.easings.setPosition(newXPos, theEvent.getController().getPosition()[1]);
         }
         if (seg.pos == 3)
         {
-          int newWidth =  theEvent.getController().getPointer().x();
+          int mX = theEvent.getController().getPointer().x() - seg.pX;
+          int newWidth = seg.wOld + mX;
           seg.easings.setWidth(newWidth);
         }
       }

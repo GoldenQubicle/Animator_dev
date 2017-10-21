@@ -147,6 +147,7 @@ private class Animator extends PApplet
       Segment seg = controller.Segments.get(segmentKey);
       seg.wOld = seg.easings.getWidth();
       seg.xOld = int(seg.easings.getPosition()[0]);
+      seg.pX = theEvent.getController().getPointer().x();
       
       float section = seg.easings.getWidth()/3;
       float start = seg.easings.getAbsolutePosition()[0];
