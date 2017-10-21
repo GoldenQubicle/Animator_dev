@@ -139,7 +139,7 @@ private class Animator extends PApplet
 
   public void controlEvent(CallbackEvent theEvent)
   {    
-    if (theEvent.getController().getName().contains("aniSegment"))
+    if (theEvent.getController().getName().contains("segment"))
     {
       float pX = theEvent.getController().getPointer().x();  
       String segmentKey = theEvent.getController().getName();
@@ -158,7 +158,8 @@ private class Animator extends PApplet
       if ( pX >= start && pX <= mid1)
       {
         seg.pos = 1;
-        //println("left start at " + pX);   
+        //println("left start at " + pX);
+        //println(seg.aniKey);
       }
       if (pX >= mid1 && pX <= mid2)
       {

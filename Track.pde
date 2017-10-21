@@ -4,6 +4,7 @@ private class Track
   private String Key;
   private String [] Fields;
   private Object obj;
+  private int segID;
 
   Track(cp5type control, String[] fields, Object obj, String hk)
   {
@@ -12,6 +13,11 @@ private class Track
     this.Fields = fields;
     this.obj = obj;
     this.Key = hk;
+  }
+  
+  int getSegId()
+  {
+    return this.segID+=1;    
   }
 }
 

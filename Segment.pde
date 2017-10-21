@@ -11,13 +11,16 @@ private class Segment
   protected Ani ani;
   protected int pos = 0;
   protected int wOld, xOld, pX;
+  private String aniKey, trackKey, field;
 
   Segment(Controller _c, String track, int fieldId)
   {
     c = _c;
-    String field = _c.a.Tracks.get(track).Fields[fieldId];
-    Object obj = _c.a.Tracks.get(track).obj;
-    String aniKey = "aniSegment" + int(random(1000)); // hacky
+    trackKey = track;
+    aniKey = trackKey + " segment" + c.a.Tracks.get(trackKey).getSegId();
+
+    Object obj = _c.a.Tracks.get(trackKey).obj;
+    field = _c.a.Tracks.get(trackKey).Fields[fieldId];
 
     ani = new Ani(obj, Duration, Start, field, 200, Ani.LINEAR);
     ani.setPlayMode(Ani.FORWARD);
@@ -25,7 +28,7 @@ private class Segment
 
     easings = c.a.gui.addScrollableList(aniKey)
       .setCaptionLabel("Easings")
-      .setGroup("tg"+track)
+      .setGroup("tg"+trackKey)
       .setPosition(0, 25*fieldId)
       .setSize(int(_c.a.wWidth*_c.a.wRight), 50)
       .setItems(EasingNames).setBarHeight(15)
@@ -34,7 +37,7 @@ private class Segment
       public void controlEvent(CallbackEvent theEvent) 
       {   
         Segment seg = c.Segments.get(theEvent.getController().getName());
-         int trackWidth =  theEvent.getController().getParent().getWidth();
+        int trackWidth =  theEvent.getController().getParent().getWidth();
         if (seg.pos == 1)
         {        
           int mX = int(map(c.a.mouseX, 0, c.a.wWidth, int((c.a.wWidth*c.a.wLeft)), trackWidth));
@@ -55,8 +58,8 @@ private class Segment
           int newWidth = constrain(seg.wOld + mX, 0, trackWidth-seg.xOld);
           seg.easings.setWidth(newWidth);
         }
-       updateAni(seg, trackWidth);
-      }      
+        updateAni(seg, trackWidth);
+      }
     }
     )
     .onRelease(new CallbackListener() 
@@ -76,13 +79,13 @@ private class Segment
     );
     c.Segments.put(aniKey, this);
   }
-  
+
   void updateAni(Segment seg, int trackWidth)
   {
-  Start = int(map(seg.easings.getPosition()[0], 0, trackWidth, 0,c.a.frames));
-  End = int(map(seg.easings.getPosition()[0]+seg.easings.getWidth(), 0, trackWidth, 0,c.a.frames));
-  Duration = End - Start;
-  ani.setDelay(Start);
-  ani.setDuration(Duration);
+    Start = int(map(seg.easings.getPosition()[0], 0, trackWidth, 0, c.a.frames));
+    End = int(map(seg.easings.getPosition()[0]+seg.easings.getWidth(), 0, trackWidth, 0, c.a.frames));
+    Duration = End - Start;
+    ani.setDelay(Start);
+    ani.setDuration(Duration);
   }
 }
