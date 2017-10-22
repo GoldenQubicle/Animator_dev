@@ -127,18 +127,21 @@ private class Controller
           ScrollableList segments = a.gui.get(ScrollableList.class, theEvent.getController().getName());
           Map <String, Object>item = segments.getItem(itemSelected); 
           Segment seg = Segments.get(item.get("name"));
-
-          a.gui.getController(seg.Field).setValue(seg.ani.getEnd()); // be aware this is NOT going to work for slider2D
-                
           seg.easings.setColorBackground(ControlP5.RED);
           seg.easings.setColorForeground(ControlP5.RED);
-          seg.ani.setEnd(getTargetValue(seg.trackKey, seg.Field));
+
+          seg.ani.setEnd(seg.getValue()); // this is STILL only called once you git
+
+          // this is NOT gonna work for slider2D since it cannot not called with Field name. .  
+          a.gui.getController(seg.Field).setValue(seg.getValue()); 
+          a.gui.getController(seg.Field).plugTo(seg, "Value");
         } else if (theEvent.getController().getValue() == 0)
         {
           itemSelected = int(theEvent.getController().getValue());
 
           for (Segment seg : Segments.values())
           {
+            a.gui.getController(seg.Field).unplugFrom(seg);
             seg.easings.setColor(ControlP5.THEME_CP52014);
           }
         }
@@ -257,7 +260,7 @@ private class Controller
     seq.beginStep();
 
     for (Segment segment : Segments.values())
-    {
+    {  
       seq.add(segment.ani);
     }
     seq.endStep();
@@ -266,7 +269,7 @@ private class Controller
 
   void playpause()
   {
-    if (!a.master.isPlaying() && !a.isPlaying)
+   if (!a.master.isPlaying() && !a.isPlaying)
     {
       createSeq();
       a.isPlaying = true;

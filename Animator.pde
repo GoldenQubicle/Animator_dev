@@ -140,15 +140,15 @@ private class Animator extends PApplet
   public void controlEvent(CallbackEvent theEvent)
   {    
     if (theEvent.getController().getName().contains("segment"))
-    {
+    {      
       float pX = theEvent.getController().getPointer().x();  
       String segmentKey = theEvent.getController().getName();
-      
+
       Segment seg = controller.Segments.get(segmentKey);
       seg.wOld = seg.easings.getWidth();
       seg.xOld = int(seg.easings.getPosition()[0]);
       seg.pX = theEvent.getController().getPointer().x();
-      
+
       float section = seg.easings.getWidth()/3;
       float start = seg.easings.getAbsolutePosition()[0];
       float mid1 = section; 

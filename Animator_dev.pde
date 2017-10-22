@@ -1,25 +1,12 @@
 /*
+hmm got a number of bugs to work out
+- adding an ani once isPlaying, object being drawn disappears. . 
+- when draggin master timeline immediatly; nullpointer in controller line 248
+- when draggin master timeline after play, but without any ani;  'map(0,0,0,0,1) gets called which returns NaN'
+- 'no public this method' error for ani resume
+
 TODO
-  start / end object values on playback
-  related; 'no public this method' error for ani resume
-  probably need additional logic checks and/or hard reset, i.e. clear ani and rebuild
-  
-
-
-so current thinking on how to actually edit the segment value
-add a scrollable list to track control which contains segments
-select segment from it => it lights up and timeline jumps to proper place
-then and only then is the anisegment value able to be editted
-this supposes there's also a way to de-select, possible by an empty entry in scrollable list (or on collapse?!)
-
-moreover this idea could be extended to trackcontrol themselves
-say for instance there > 5 color wheels. Instead of having all 5 individually on screen
-I could have 1 color wheel with 2 scrollable list next to it
-first I select which variable I want (i.e. which track) and once selected tracks lights up, and second list fills
-then from second list I select actual segment to edit
-
-of course there're halve a dozen ways to go about 
-however the (two tiered) concept of scrollable list(s) next to controls has potential
+  fix playback issues  
 
 */
 

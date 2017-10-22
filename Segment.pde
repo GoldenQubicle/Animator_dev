@@ -7,6 +7,7 @@ private class Segment
   protected float Duration;
   protected float Start;
   protected float End;   
+  protected float Value;
   protected ScrollableList easings;
   protected Ani ani;
   protected int pos = 0;
@@ -21,8 +22,8 @@ private class Segment
 
     Object obj = _c.a.Tracks.get(trackKey).obj;
     Field = _c.a.Tracks.get(trackKey).Fields[fieldId];
-
-    ani = new Ani(obj, Duration, Start, Field, 200, Ani.LINEAR);
+    Value = 200;
+    ani = new Ani(obj, Duration, Start, Field, Value, Ani.LINEAR);
     ani.setPlayMode(Ani.FORWARD);
     ani.noRepeat();
 
@@ -78,6 +79,11 @@ private class Segment
     }
     );
     c.Segments.put(aniKey, this);
+  }
+
+  float getValue()
+  {    
+   return this.Value; 
   }
 
   void updateAni(Segment seg, int trackWidth)
