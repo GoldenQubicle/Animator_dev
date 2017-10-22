@@ -1,6 +1,9 @@
 /*
- TODO fix the 'no public this method' error for ani resume, prolly some additional logic checks and/or hard reset
-
+TODO
+  start / end object values on playback
+  related; 'no public this method' error for ani resume
+  probably need additional logic checks and/or hard reset, i.e. clear ani and rebuild
+  
 
 
 so current thinking on how to actually edit the segment value

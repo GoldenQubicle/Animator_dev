@@ -11,7 +11,7 @@ private class Segment
   protected Ani ani;
   protected int pos = 0;
   protected int wOld, xOld, pX;
-  private String aniKey, trackKey, field;
+  private String aniKey, trackKey, Field;
 
   Segment(Controller _c, String track, int fieldId)
   {
@@ -20,9 +20,9 @@ private class Segment
     aniKey = trackKey + " segment" + c.a.Tracks.get(trackKey).getSegId();
 
     Object obj = _c.a.Tracks.get(trackKey).obj;
-    field = _c.a.Tracks.get(trackKey).Fields[fieldId];
+    Field = _c.a.Tracks.get(trackKey).Fields[fieldId];
 
-    ani = new Ani(obj, Duration, Start, field, 200, Ani.LINEAR);
+    ani = new Ani(obj, Duration, Start, Field, 200, Ani.LINEAR);
     ani.setPlayMode(Ani.FORWARD);
     ani.noRepeat();
 

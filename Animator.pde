@@ -158,18 +158,14 @@ private class Animator extends PApplet
       if ( pX >= start && pX <= mid1)
       {
         seg.pos = 1;
-        //println("left start at " + pX);
-        //println(seg.aniKey);
       }
       if (pX >= mid1 && pX <= mid2)
       {
-        //println("mid section");
         seg.pos = 2;
       }
       if (pX >= mid2 && pX <= end)
       {
         seg.pos = 3;
-        //println("right end");
       }
     }
   }

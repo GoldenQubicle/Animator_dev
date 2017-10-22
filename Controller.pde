@@ -6,7 +6,7 @@ private class Controller
   private int trackHeight = 25;
   private int cPosY = 10;
   private int spacing = 10;
-  private int tPosY;
+  private int tPosY, itemSelected;
   private  AniSequence seq;
 
   Controller(Animator _a)
@@ -16,6 +16,7 @@ private class Controller
     needleX = int(a.wWidth*a.wLeft);
     needleY = int(a.wHeight/2);
     needleH = a.cHeight/2;
+    itemSelected = 0 ;
   }
 
   void setupTracks()
@@ -56,36 +57,7 @@ private class Controller
       .setValue(getTargetValue(target, field))
       .plugTo(a.Tracks.get(target).obj, field);
 
-    // need to factor this out boooii!!!
-    String [] items = new String[] {"no segments"};
-    a.gui.addScrollableList(target + "seg")
-      .setGroup(target)
-      .setPosition(int((a.wWidth/2))+50, 5)
-      .addItems(items)
-      .onClick(new CallbackListener() 
-    {
-      public void controlEvent(CallbackEvent theEvent) 
-      {
-
-        if (theEvent.getController().getValue() != 0)
-        {
-          ScrollableList easing = a.gui.get(ScrollableList.class, theEvent.getController().getName());
-          Map <String, Object>item = easing.getItem(int(theEvent.getController().getValue())); 
-
-          Segment seg = Segments.get(item.get("name"));
-          seg.easings.setColorBackground(ControlP5.RED);
-          seg.easings.setColorForeground(ControlP5.RED);
-          
-        } else
-        {
-          for (Segment seg : Segments.values())
-          {
-            seg.easings.setColor(ControlP5.THEME_CP52014);
-          }
-        }
-      }
-    }
-    );
+    segmentSelector(target, field);
 
     if (a.minmax.containsKey(target))
     {
@@ -93,7 +65,6 @@ private class Controller
         .setRange(a.minmax.get(target)[0], a.minmax.get(target)[1]);
     }
   }
-
 
   void addSlider2D(String target, String field_1, String field_2)
   {
@@ -122,12 +93,58 @@ private class Controller
         }
       }
     }
-    );
+    );    
+    segmentSelector(target, field_1);
+    segmentSelector(target, field_2);
+
     if (a.minmax.containsKey(target))
     {
       a.gui.get(Slider2D.class, target+"2d")
         .setMinMax(a.minmax.get(target)[0], a.minmax.get(target)[2], a.minmax.get(target)[1], a.minmax.get(target)[3]);
     }
+  }
+
+  void segmentSelector(String target, String field)
+  {
+    String [] items = new String[] {"no segments"};
+    a.gui.addScrollableList(target + "seg" + field)
+      .setGroup(target)
+      .setPosition(int((a.wWidth/2))+50, 5)
+      .addItems(items)
+      .onClick(new CallbackListener() 
+    {
+      public void controlEvent(CallbackEvent theEvent) 
+      {
+        if (theEvent.getController().getValue() != itemSelected && theEvent.getController().getValue() > 0)
+        {
+
+          for (Segment seg : Segments.values())
+          {
+            seg.easings.setColor(ControlP5.THEME_CP52014);
+          }                     
+
+          itemSelected = int(theEvent.getController().getValue());
+          ScrollableList segments = a.gui.get(ScrollableList.class, theEvent.getController().getName());
+          Map <String, Object>item = segments.getItem(itemSelected); 
+          Segment seg = Segments.get(item.get("name"));
+
+          a.gui.getController(seg.Field).setValue(seg.ani.getEnd()); // be aware this is NOT going to work for slider2D
+                
+          seg.easings.setColorBackground(ControlP5.RED);
+          seg.easings.setColorForeground(ControlP5.RED);
+          seg.ani.setEnd(getTargetValue(seg.trackKey, seg.Field));
+        } else if (theEvent.getController().getValue() == 0)
+        {
+          itemSelected = int(theEvent.getController().getValue());
+
+          for (Segment seg : Segments.values())
+          {
+            seg.easings.setColor(ControlP5.THEME_CP52014);
+          }
+        }
+      }
+    }
+    );
   }
 
   void trackGroup(String target, String[] fields)
@@ -156,10 +173,10 @@ private class Controller
     {
       public void controlEvent(CallbackEvent theEvent) 
       {        
-        String target = theEvent.getController().getParent().getName().substring(2);
+        String target = theEvent.getController().getParent().getName().substring(2); 
         int fieldId = theEvent.getController().getId();
-        Segment seg = new Segment(a.controller, target, fieldId);
-        a.gui.get(ScrollableList.class, target + "seg").addItem(seg.aniKey, seg);
+        Segment seg = new Segment(a.controller, target, fieldId);        
+        a.gui.get(ScrollableList.class, target + "seg" + seg.Field).addItem(seg.aniKey, seg);
       }
     }
     );
