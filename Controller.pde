@@ -130,11 +130,12 @@ private class Controller
           seg.easings.setColorBackground(ControlP5.RED);
           seg.easings.setColorForeground(ControlP5.RED);
 
-          seg.ani.setEnd(seg.getValue()); // this is STILL only called once you git
-
           // this is NOT gonna work for slider2D since it cannot not called with Field name. .  
           a.gui.getController(seg.Field).setValue(seg.getValue()); 
           a.gui.getController(seg.Field).plugTo(seg, "Value");
+          
+          seg.ani.setEnd(seg.getValue()); // this is STILL only called once you git
+          
         } else if (theEvent.getController().getValue() == 0)
         {
           itemSelected = int(theEvent.getController().getValue());
@@ -230,7 +231,11 @@ private class Controller
     if (mX > needleX-20 && mX < needleX+20 && mP && a.master.isPlaying() && (mY > needleY-needleH && mY < needleY+needleH))
     {
       a.master.pause();
-      seq.pause();
+      //seq.pause();
+      for (Segment segment : Segments.values())
+      {  
+        segment.ani.pause();
+      }
     }
     if (mX > needleX-20 && mX < needleX+20 && (mY > needleY-needleH && mY < needleY+needleH))
     {
@@ -245,7 +250,12 @@ private class Controller
       a.rect(needleX-5, needleY-needleH, 10, needleH*2);
 
       a.master.seek(map(mX, a.wWidth*a.wLeft, a.wWidth*a.wRight, 0, 1));
-      seq.seek(map(mX, a.wWidth*a.wLeft, a.wWidth*a.wRight, 0, 1));
+      //seq.seek(map(mX, a.wWidth*a.wLeft, a.wWidth*a.wRight, 0, 1));
+
+      for (Segment segment : Segments.values())
+      {  
+        segment.ani.seek(map(mX, a.wWidth*a.wLeft, a.wWidth*a.wRight, 0, 1));
+      }
     }
     if (a.master.isEnded())
     {
@@ -255,6 +265,7 @@ private class Controller
 
   void createSeq()
   {
+    //
     seq = new AniSequence(a.parent);
     seq.beginSequence();
     seq.beginStep();
@@ -269,20 +280,35 @@ private class Controller
 
   void playpause()
   {
-   if (!a.master.isPlaying() && !a.isPlaying)
+    if (!a.master.isPlaying() && !a.isPlaying)
     {
-      createSeq();
+      //createSeq();
       a.isPlaying = true;
       a.master.start();
-      seq.start();
+      //seq.start();
+
+      for (Segment segment : Segments.values())
+      {         
+        segment.ani.setBegin(10);
+        segment.ani.start();        
+      }
     } else if (a.master.isPlaying() && a.isPlaying)
     {
       a.master.pause();
-      seq.pause();
+      //seq.pause();
+
+      for (Segment segment : Segments.values())
+      {  
+        segment.ani.pause();
+      }
     } else if (!a.master.isPlaying() && a.isPlaying) 
     {
       a.master.resume();
-      seq.resume();
+      //seq.resume();
+      for (Segment segment : Segments.values())
+      {  
+        segment.ani.resume();
+      }
     }
   }
 }

@@ -13,6 +13,7 @@ private class Segment
   protected int pos = 0;
   protected int wOld, xOld, pX;
   private String aniKey, trackKey, Field;
+  private Object obj;
 
   Segment(Controller _c, String track, int fieldId)
   {
@@ -20,8 +21,8 @@ private class Segment
     trackKey = track;
     aniKey = trackKey + " segment" + c.a.Tracks.get(trackKey).getSegId();
 
-    Object obj = _c.a.Tracks.get(trackKey).obj;
-    Field = _c.a.Tracks.get(trackKey).Fields[fieldId];
+    obj = c.a.Tracks.get(trackKey).obj;                                      
+    Field = c.a.Tracks.get(trackKey).Fields[fieldId];
     Value = 200;
     ani = new Ani(obj, Duration, Start, Field, Value, Ani.LINEAR);
     ani.setPlayMode(Ani.FORWARD);
@@ -63,13 +64,6 @@ private class Segment
       }
     }
     )
-    .onRelease(new CallbackListener() 
-    {
-      public void controlEvent(CallbackEvent theEvent) 
-      {
-      }
-    }
-    )
     .onClick(new CallbackListener() 
     {
       public void controlEvent(CallbackEvent theEvent) 
@@ -83,7 +77,7 @@ private class Segment
 
   float getValue()
   {    
-   return this.Value; 
+    return this.Value;
   }
 
   void updateAni(Segment seg, int trackWidth)
