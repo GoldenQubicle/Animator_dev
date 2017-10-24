@@ -5,7 +5,8 @@ private class Track
   private String [] Fields;
   private Object obj;
   private int segID;
-
+  private Map<String, Segment>Segments;
+  
   Track(cp5type control, String[] fields, Object obj, String hk)
   {
     // TODO: type check fields in order to setup different track type (i.e. toggle for bool)    

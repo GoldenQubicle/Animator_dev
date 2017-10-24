@@ -6,8 +6,7 @@ private class Controller
   private int trackHeight = 25;
   private int cPosY = 10;
   private int spacing = 10;
-  private int tPosY, itemSelected;
-  private  AniSequence seq;
+  private int tPosY, itemSelected, currentFrame;
 
   Controller(Animator _a)
   {
@@ -133,9 +132,6 @@ private class Controller
           // this is NOT gonna work for slider2D since it cannot not called with Field name. .  
           a.gui.getController(seg.Field).setValue(seg.getValue()); 
           a.gui.getController(seg.Field).plugTo(seg, "Value");
-          
-          seg.ani.setEnd(seg.getValue()); // this is STILL only called once you git
-          
         } else if (theEvent.getController().getValue() == 0)
         {
           itemSelected = int(theEvent.getController().getValue());
@@ -224,6 +220,25 @@ private class Controller
     }
   }
 
+  int getCurrentFrame()
+  {   
+    return 1+int(map(a.master.getSeek(), 0, 1, 0, a.frames));
+  }
+
+  void animate()
+  {
+    if (a.isPlaying)
+    {
+      for (Segment seg : Segments.values())
+      {
+        if (seg.Start == getCurrentFrame())
+        {
+          seg.ani();
+        }
+      }
+    }
+  }
+
   void scrollTimeLine(float mX, float mY, boolean mP) 
   {        
     a.stroke(2);
@@ -231,11 +246,6 @@ private class Controller
     if (mX > needleX-20 && mX < needleX+20 && mP && a.master.isPlaying() && (mY > needleY-needleH && mY < needleY+needleH))
     {
       a.master.pause();
-      //seq.pause();
-      for (Segment segment : Segments.values())
-      {  
-        segment.ani.pause();
-      }
     }
     if (mX > needleX-20 && mX < needleX+20 && (mY > needleY-needleH && mY < needleY+needleH))
     {
@@ -248,14 +258,7 @@ private class Controller
       a.noStroke();
       a.fill(255, 128);
       a.rect(needleX-5, needleY-needleH, 10, needleH*2);
-
       a.master.seek(map(mX, a.wWidth*a.wLeft, a.wWidth*a.wRight, 0, 1));
-      //seq.seek(map(mX, a.wWidth*a.wLeft, a.wWidth*a.wRight, 0, 1));
-
-      for (Segment segment : Segments.values())
-      {  
-        segment.ani.seek(map(mX, a.wWidth*a.wLeft, a.wWidth*a.wRight, 0, 1));
-      }
     }
     if (a.master.isEnded())
     {
@@ -263,52 +266,18 @@ private class Controller
     }
   }
 
-  void createSeq()
-  {
-    //
-    seq = new AniSequence(a.parent);
-    seq.beginSequence();
-    seq.beginStep();
-
-    for (Segment segment : Segments.values())
-    {  
-      seq.add(segment.ani);
-    }
-    seq.endStep();
-    seq.endSequence();
-  }
 
   void playpause()
   {
-    if (!a.master.isPlaying() && !a.isPlaying)
+    if (!a.master.isPlaying())
     {
-      //createSeq();
       a.isPlaying = true;
       a.master.start();
-      //seq.start();
-
-      for (Segment segment : Segments.values())
-      {         
-        segment.ani.setBegin(10);
-        segment.ani.start();        
-      }
-    } else if (a.master.isPlaying() && a.isPlaying)
+    } else 
     {
-      a.master.pause();
-      //seq.pause();
-
-      for (Segment segment : Segments.values())
-      {  
-        segment.ani.pause();
-      }
-    } else if (!a.master.isPlaying() && a.isPlaying) 
-    {
-      a.master.resume();
-      //seq.resume();
-      for (Segment segment : Segments.values())
-      {  
-        segment.ani.resume();
-      }
+      a.isPlaying = false;
+      a.master.end(); 
+      needleX = int(a.wWidth*a.wLeft);
     }
   }
 }

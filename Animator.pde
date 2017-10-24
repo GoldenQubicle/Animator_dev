@@ -135,6 +135,7 @@ private class Animator extends PApplet
   {
     background(128);
     controller.scrollTimeLine(mouseX, mouseY, mousePressed);
+    controller.animate();
   } 
 
   public void controlEvent(CallbackEvent theEvent)
