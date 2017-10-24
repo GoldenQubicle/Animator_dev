@@ -9,11 +9,10 @@ private class Animator extends PApplet
   private PApplet parent;
   private ControlP5 gui;
   protected Controller controller;   
+  private Ani master;
   private float Length, wLeft, wRight;
   private boolean isPlaying = false;
-  private int wWidth, wHeight, cHeight;
-  private Ani master;
-  private int frames;
+  private int wWidth, wHeight, cHeight, frames;
   private Map <String, Track> Tracks = new HashMap<String, Track>();
   private Map <String, float[]> minmax = new HashMap<String, float[]>();
 
@@ -24,11 +23,11 @@ private class Animator extends PApplet
     Length = _l;
     wWidth = _w;
     wHeight = _h;    
-    PApplet.runSketch(new String[]{this.getClass().getName()}, this);
-    frames = int(Length*60);
     wLeft = .02;
     wRight = .96;
     cHeight = 26;
+    frames = int(Length*60);
+    PApplet.runSketch(new String[]{this.getClass().getName()}, this);
   }; 
 
   public void settings()

@@ -2,11 +2,10 @@ private class Controller
 {
   Animator a;
   private Map<String, Segment>Segments;
-  private int needleX, needleY, needleH;
+  private int needleX, needleY, needleH,tPosY, itemSelected;
   private int trackHeight = 25;
   private int cPosY = 10;
   private int spacing = 10;
-  private int tPosY, itemSelected, currentFrame;
 
   Controller(Animator _a)
   {
@@ -132,6 +131,7 @@ private class Controller
           // this is NOT gonna work for slider2D since it cannot not called with Field name. .  
           a.gui.getController(seg.Field).setValue(seg.getValue()); 
           a.gui.getController(seg.Field).plugTo(seg, "Value");
+          
         } else if (theEvent.getController().getValue() == 0)
         {
           itemSelected = int(theEvent.getController().getValue());
@@ -265,7 +265,6 @@ private class Controller
       a.isPlaying = false;
     }
   }
-
 
   void playpause()
   {
