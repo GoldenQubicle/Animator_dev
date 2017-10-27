@@ -6,6 +6,9 @@ private class Controller
   private int trackHeight = 25;
   private int cPosY = 10;
   private int spacing = 10;
+  private PImage frame;
+  private PImage[] frames; 
+  private boolean isRendering;
 
   Controller(Animator _a)
   {
@@ -15,6 +18,7 @@ private class Controller
     needleY = int(a.wHeight/2);
     needleH = a.cHeight/2;
     itemSelected = 0 ;
+    frames = new PImage[a.frames+1];
   }
 
   void initialFieldValue(Track t)
@@ -232,6 +236,49 @@ private class Controller
   int getCurrentFrame()
   {   
     return 1+int(map(a.master.getSeek(), 0, 1, 0, a.frames));
+  }
+
+  void renderPImage(int renderFrame) {
+    PImage frame = createImage(a.parent.width, a.parent.height, ARGB);
+    loadPixels();
+    frame.loadPixels();
+    frame.pixels = pixels;
+    frame.updatePixels();
+    frame.save("frame " + renderFrame + ".png");
+    frames[renderFrame-1] = loadImage("frame " + renderFrame + ".png");
+    //println("rendered frame " + renderFrame + " out of " + int(a.frames));
+    isRendering = true;
+  }
+
+  int renderLoop()
+  {
+    int renderFrame = 1;
+    float sFrame = 0;
+
+    for (int i = 0; i <= a.frames; i ++)
+    {
+      renderFrame=i+1;
+      sFrame = map(i, 0, a.frames, 0, 1);
+
+      for (Segment seg : Segments.values())
+      {
+        if (seg.Start >= renderFrame)
+        {
+          seg.seek(renderFrame);
+        }
+      }
+
+      renderPImage(renderFrame);
+
+      println(renderFrame, sFrame);
+
+      if (renderFrame == a.frames+1)
+      {
+        isRendering = false;
+        break;
+      };
+    }
+    return renderFrame;
   }
 
   void animate()

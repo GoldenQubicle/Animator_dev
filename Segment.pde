@@ -83,12 +83,14 @@ private class Segment
   {
     if (!seek)
     {
-      ani = Ani.to(c.a.Tracks.get(trackKey).obj, Duration, Field, Value, easing[easy]); //<>//
+      ani = new Ani (c.a.Tracks.get(trackKey).obj, Duration, Field, Value, easing[easy]); //<>//
       seek = true;
     }
     float s = map(frame, Start, End, 0, 1);
     s = constrain(s, 0, 1);
+    ani.start();
     ani.seek(s);
+    println("check");
   }
 
   void mapToFrames(Segment seg, int trackWidth)

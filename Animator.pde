@@ -135,6 +135,11 @@ private class Animator extends PApplet
     background(128);
     controller.scrollTimeLine(mouseX, mouseY, mousePressed);
     controller.animate();
+    
+    if (controller.isRendering)
+    {
+      controller.renderLoop();
+    }
   } 
 
 
@@ -180,6 +185,12 @@ private class Animator extends PApplet
 
   void keyPressed()
   {
+    if(key == 'r')
+    {
+     controller.isRendering = true; 
+    }
+      
+    
     if (key == ' ')
     {
       controller.playpause();
