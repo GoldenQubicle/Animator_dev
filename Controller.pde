@@ -240,9 +240,9 @@ private class Controller
 
   void renderPImage(int renderFrame) {
     PImage frame = createImage(a.parent.width, a.parent.height, ARGB);
-    loadPixels();
+    a.parent.loadPixels();
     frame.loadPixels();
-    frame.pixels = pixels;
+    frame.pixels = a.parent.pixels;
     frame.updatePixels();
     frame.save("frame " + renderFrame + ".png");
     frames[renderFrame-1] = loadImage("frame " + renderFrame + ".png");
