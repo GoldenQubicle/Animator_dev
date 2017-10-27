@@ -2,7 +2,7 @@ private class Controller
 {
   Animator a;
   private Map<String, Segment>Segments;
-  private int needleX, needleY, needleH,tPosY, itemSelected;
+  private int needleX, needleY, needleH, tPosY, itemSelected;
   private int trackHeight = 25;
   private int cPosY = 10;
   private int spacing = 10;
@@ -17,17 +17,27 @@ private class Controller
     itemSelected = 0 ;
   }
 
+  void initialFieldValue(Track t)
+  {
+    for (int i = 0; i < t.Fields.length; i++)
+    {
+      t.fieldStart[i] = getTargetValue(t.Key, t.Fields[i]);
+      //println(t.fieldStart[i]);
+    }
+  }
+
   void setupTracks()
   {
     tPosY = a.wHeight/2 + a.cHeight + spacing;
 
     for (Track t : a.Tracks.values())
     {
+      initialFieldValue(t);
       trackGroup(t.Key, t.Fields);
       switch(t.control)
       {
       case SLIDER:
-        addSlider(t.Key, t.Fields[0]);       
+        addSlider(t.Key, t.Fields[0]);
         break;
       case SLIDER2D:
         addSlider2D(t.Key, t.Fields[0], t.Fields[1]);
@@ -53,7 +63,7 @@ private class Controller
       .setPosition(5, 5)
       .setSize(int((a.wWidth/2)*a.wRight), 10)
       .setValue(getTargetValue(target, field))
-      .plugTo(a.Tracks.get(target).obj, field);
+      .plugTo(a.Tracks.get(target).obj, field);     
 
     segmentSelector(target, field);
 
@@ -131,7 +141,6 @@ private class Controller
           // this is NOT gonna work for slider2D since it cannot not called with Field name. .  
           a.gui.getController(seg.Field).setValue(seg.getValue()); 
           a.gui.getController(seg.Field).plugTo(seg, "Value");
-          
         } else if (theEvent.getController().getValue() == 0)
         {
           itemSelected = int(theEvent.getController().getValue());
@@ -226,7 +235,7 @@ private class Controller
   }
 
   void animate()
-  {
+  {    
     if (a.isPlaying)
     {
       for (Segment seg : Segments.values())
@@ -236,6 +245,39 @@ private class Controller
           seg.ani();
         }
       }
+    }
+  }
+
+  void isEnded(Ani theAni)
+  {
+    a.isPlaying = false;
+    setTrackFields();
+    Ani.killAll();  
+    needleX = int(a.wWidth*a.wLeft); // aaaargh why isnt this being reset when master is properly ended ffs!!!
+  }
+
+  void setTrackFields()
+  {
+    for (Track t : a.Tracks.values())
+    {
+      for (int i = 0; i < t.Fields.length; i++)
+      {
+        setTargetValue(t.Key, t.Fields[i], t.fieldStart[i]);
+      }
+    }
+  }
+
+  void playpause()
+  {
+    if (!a.master.isPlaying())
+    {
+      a.isPlaying = true;
+      a.master.start();
+    } else 
+    {
+      a.isPlaying = false;
+      //Ani.killAll();
+      a.master.end();
     }
   }
 
@@ -259,24 +301,12 @@ private class Controller
       a.fill(255, 128);
       a.rect(needleX-5, needleY-needleH, 10, needleH*2);
       a.master.seek(map(mX, a.wWidth*a.wLeft, a.wWidth*a.wRight, 0, 1));
-    }
-    if (a.master.isEnded())
-    {
-      a.isPlaying = false;
-    }
-  }
+      int frame = int(map(mX, a.wWidth*a.wLeft, a.wWidth*a.wRight, 0, a.frames));
 
-  void playpause()
-  {
-    if (!a.master.isPlaying())
-    {
-      a.isPlaying = true;
-      a.master.start();
-    } else 
-    {
-      a.isPlaying = false;
-      a.master.end(); 
-      needleX = int(a.wWidth*a.wLeft);
+      for (Segment seg : Segments.values())
+      {
+        seg.seek(frame);
+      }
     }
   }
 }

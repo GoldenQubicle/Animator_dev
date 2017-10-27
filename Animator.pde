@@ -125,7 +125,7 @@ private class Animator extends PApplet
   void timeLine()
   {
     gui.addGroup("playback").setPosition(int((wWidth*wLeft)), wHeight/2-cHeight/2).setSize(int((wWidth*wRight)), cHeight).setBackgroundColor(color(255, 50)).disableCollapse();
-    master = new Ani(controller, frames, 0.0, "needleX", ((wWidth*wLeft)+(wWidth*wRight)), Ani.LINEAR);
+    master = Ani.to(controller, frames, 0.0, "needleX", ((wWidth*wLeft)+(wWidth*wRight)), Ani.LINEAR, "onEnd:isEnded");
     master.setPlayMode(Ani.FORWARD);
     master.noRepeat();
   }
@@ -137,8 +137,16 @@ private class Animator extends PApplet
     controller.animate();
   } 
 
+
   public void controlEvent(CallbackEvent theEvent)
-  {    
+  {      
+    if (theEvent.getController().getName().contains("seg") && theEvent.getController().getValue() == 0)
+    {
+      String track = theEvent.getController().getName();
+      track = track.substring(0, 6);
+      //println(track);
+    }
+
     if (theEvent.getController().getName().contains("segment"))
     {      
       float pX = theEvent.getController().getPointer().x();  

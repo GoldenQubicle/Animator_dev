@@ -3,6 +3,7 @@ private class Track
   private cp5type control;
   private String Key;
   private String [] Fields;
+  private float [] fieldStart;
   private Object obj;
   private int segID;
  
@@ -13,16 +14,16 @@ private class Track
     this.Fields = fields;
     this.obj = obj;
     this.Key = hk;
+    this.fieldStart = new float[Fields.length];
+    
   }
-  
+    
   int getSegId()
   {
     return this.segID+=1;    
   }
 
 }
-
-
 
 private enum cp5type 
 {

@@ -1,3 +1,10 @@
+/*
+TODO
+- initial track field value
+
+
+*/
+
 Animator window;
 
 PVector xy = new PVector(256, 256); 
@@ -15,7 +22,7 @@ void setup()
   window = new Animator(this, 2, 728, 512);
 
   window.newTrack("rWidth", -width, width); 
-  window.newTrack("rHeight");
+  //window.newTrack("rHeight");
   //window.newTrack(circle, "R", 0, 400);
   //window.newTrack("rWidth", "rHeight", -200, 200, -350, 800);
   //window.newTrack(circle, "X", "Y", -200, width, -350, 800);

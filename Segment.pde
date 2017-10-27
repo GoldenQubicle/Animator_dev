@@ -8,6 +8,7 @@ private class Segment
   protected float Duration, Start, End, Value;
   protected int wOld, xOld, pX, easy, pos;
   private String aniKey, trackKey, Field;
+  private boolean seek = false;
 
   Segment(Controller _c, String track, int fieldId)
   {
@@ -16,12 +17,12 @@ private class Segment
     aniKey = trackKey + " segment" + c.a.Tracks.get(trackKey).getSegId();
     Field = c.a.Tracks.get(trackKey).Fields[fieldId];
     Value = 200;
-
+    
     easings = c.a.gui.addScrollableList(aniKey)
       .setCaptionLabel("Easings")
       .setGroup("tg"+trackKey)
       .setPosition(0, 25*fieldId)
-      .setSize(int(_c.a.wWidth*_c.a.wRight), 50)
+      .setSize(int(_c.a.wWidth*_c.a.wRight), 100)
       .setItems(EasingNames)
       .setBarHeight(15)
       .onDrag(new CallbackListener() 
@@ -58,6 +59,7 @@ private class Segment
     {
       public void controlEvent(CallbackEvent theEvent) 
       {   
+        theEvent.getController().bringToFront();
         easy = int(theEvent.getController().getValue());
       }
     }
@@ -74,6 +76,19 @@ private class Segment
   {   
     ani = Ani.to(c.a.Tracks.get(trackKey).obj, Duration, Field, Value, easing[easy]);
     ani.start();
+ 
+  }
+
+  void seek(int frame)
+  {
+    if (!seek)
+    {
+      ani = Ani.to(c.a.Tracks.get(trackKey).obj, Duration, Field, Value, easing[easy]); //<>//
+      seek = true;
+    }
+    float s = map(frame, Start, End, 0, 1);
+    s = constrain(s, 0, 1);
+    ani.seek(s);
   }
 
   void mapToFrames(Segment seg, int trackWidth)
