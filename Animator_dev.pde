@@ -1,9 +1,14 @@
 /*
 TODO
-- initial track field value
-
-
-*/
+ - probably need a method in main animator which - somehow - checks and syncs with the frame rate of the main sketch?!
+ - initial track field value
+ 
+ 
+ USAGE
+ - size of original sketch needs to be put in settings()
+ - initialisation & newTracks goes in setup()
+ 
+ */
 
 Animator window;
 
@@ -37,6 +42,44 @@ void draw()
   rectMode(CENTER);
   rect(xy.x, xy.y, rWidth, rHeight);
   //circle.display();
+}
+
+void keyPressed()
+{
+  if (key == 'e')
+  {
+    //export(); // saveguard
+  }
+}
+
+void export()
+{
+  String [] animator = loadStrings("Animator.pde");
+  String [] controller = loadStrings("Controller.pde");
+  String [] segment = loadStrings("Segment.pde");
+  String [] track = loadStrings("Track.pde");    
+  
+  int lines = animator.length + controller.length + segment.length + track.length;
+  int lineIndex = 0;  
+  
+  String [] finalFile = new String [lines];  
+  
+  ArrayList<String[]> classFiles = new ArrayList<String[]>();   
+  classFiles.add(animator);
+  classFiles.add(controller);
+  classFiles.add(segment);
+  classFiles.add(track);  
+  
+  for (String[] file : classFiles)
+  {
+    for (String line : file)
+    {
+     finalFile[lineIndex] = line;
+     lineIndex++;
+    }
+  }
+  
+  saveStrings("data//Animator_v1.pde", finalFile);    
 }
 
 class Circle
